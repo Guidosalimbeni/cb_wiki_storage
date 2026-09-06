@@ -37,4 +37,3 @@ assumption, and needs checking against data, not asserted from an interview.
 `data_mode: simulated` for q-0001: `observed: true` here is a design choice for the DAG
 notebook (we generate this variable and treat it as visible to the estimator), not yet a
 confirmed fact about what IAGL's systems record for real bookings.
-</content>
