@@ -33,4 +33,3 @@ outcome's identifying path and must not be conditioned on — see
 `data_mode: simulated` for q-0001: `observed: true` here is a design choice — this node
 carries the planted effect the estimator has to recover, not yet a confirmed fact about
 what IAGL measures.
-</content>
