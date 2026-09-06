@@ -29,4 +29,8 @@ No broader population or window is in scope for this question.
 Note: `pwa_discount_tier_chosen` and downstream Avios/cash metrics are **not** on this
 outcome's identifying path and must not be conditioned on — see
 [[pwa_discount_tier_chosen]] for the collider/mediator warning.
+
+`data_mode: simulated` for q-0001: `observed: true` here is a design choice — this node
+carries the planted effect the estimator has to recover, not yet a confirmed fact about
+what IAGL measures.
 </content>
