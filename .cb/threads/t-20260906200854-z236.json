@@ -1,0 +1,384 @@
+{
+ "id": "t-20260906200854-z236",
+ "title": "/cb_status",
+ "created": "2026-09-06T20:08:54.193Z",
+ "updated": "2026-09-06T20:09:06.649Z",
+ "awaiting": "analyst",
+ "main": [
+  {
+   "role": "user",
+   "content": "[/cb_status]\n\nRead `wiki/questions/INDEX.md`, then every `wiki/questions/*/*.md` frontmatter, and\nreport briefly:\n\n- each open question, its `state`, and **what it is blocked on**\n- any notebook or report issued but not returned\n- any question in `state: interviewing` with no confirmed edges yet\n- **any question with `dag_tested: no` that has an analysis notebook** — the graph is\n  still untested and nothing from it can be promoted\n- any method at `evidence: none-yet` whose design has now had time to run\n- counts: concepts, events, experiments, methods, literature pages\n\nOne line per question. No prose.\n\nThen **the skills pipeline**, because that half rots silently — read `.claude/SKILLS.md`\nand `grep -rn \"skills_used\" wiki/questions/`:\n\n- what is in staging, and how many questions each has actually been used on\n- **anything at two or more uses — that has met the promotion bar.** Name it and the\n  questions; the analyst decides, you do not promote it.\n- anything in staging that has sat unused since it was captured. It may be too narrow, or\n  named so nobody finds it.\n- any skill used in a question but missing from `.claude/SKILLS.md`, or the reverse\n\nIf `wiki/questions/INDEX.md` or `.claude/SKILLS.md` has drifted from the records, fix it.\nBoth are entry points, and a stale index is worse than none because people trust it."
+  },
+  {
+   "role": "assistant",
+   "content": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "Eo4CCpABCBEYAipAgRa3L4ykno/eLh38kwQJ69fumNRoxlYNa7dDd9pSHIqtk9c18IMb4toK6FBk66VCcjO9M1MOWGl55JARs8pY7zIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiQwNjU0YzEzNC0wNTU4LTRhOWQtYjRkNi1mMjRjZjY2ZjdmOGaoAdeQ99QGEgxONQwTqFD6d4B78bQaDIxI6hV9eFQze9q9riIwpQjokId9Ne5Rf8qaM7YBdNGLvab+kAf+Pmvg1vuZoOUE+UmWWSNMUjlNxaTpALxEKis6P/GUraEZ75I7DezuqunuId1OotaFMCSI47cHaJ5ZwMlJO1Xdoa5TW821GAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01HcmHSoe2tPreSqmBEbN9sW",
+     "name": "read_file",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "file_path": "wiki/questions/INDEX.md"
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01VfqHxztG2A7D3qUqRf9Ph1",
+     "name": "list_directory",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "path": "wiki/questions"
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Js1MTFTPCGsTNjfiNZL7mN",
+     "name": "read_file",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "file_path": ".claude/SKILLS.md"
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01J4M6MM6s6k1jfFawzwCvpn",
+     "name": "list_directory",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "path": "wiki"
+     }
+    }
+   ]
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_01HcmHSoe2tPreSqmBEbN9sW",
+     "content": "     1\t# Questions\n     2\t\n     3\tOne line per question, oldest first. Written at `/cb_ask`, updated at `/cb_close`.\n     4\t\n     5\t**This is the entry point.** Nobody remembers question ids — they remember \"the Avios\n     6\tthing\" or \"what Priya asked in March\". Search this file and the `aliases:` in each record\n     7\tbefore assuming a question is new, and before filing an outcome that arrived weeks later.\n     8\t\n     9\tA stale index is worse than no index, because people trust it. `/cb_status` repairs it.\n    10\t\n    11\t| id | what was asked | also called | state | outcome |\n    12\t|---|---|---|---|---|\n    13\t| q-0001 | *(example)* Did the March price change drive churn? | the March price thing | concluded | 2.1pp, later contradicted by the Q2 holdout — see the outcome log |\n    14\t"
+    },
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_01VfqHxztG2A7D3qUqRf9Ph1",
+     "content": "wiki/questions/\n  .gitkeep\n  INDEX.md"
+    },
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_01Js1MTFTPCGsTNjfiNZL7mN",
+     "content": "     1\t# What we can already do\n     2\t\n     3\tThe other half of this system. `wiki/` records **what is true about this company**; these\n     4\trecord **what we have learned to do here**. Neither was written in advance; both\n     5\taccumulate from real questions.\n     6\t\n     7\tOne line per skill. Updated when one is captured, used, or promoted — by `librarian` at\n     8\tclose, and by `technician` when it builds access.\n     9\t\n    10\t**Read this before opening a question.** What we can already do changes what is worth\n    11\tproposing: an existing warehouse connection makes `live` data cheap rather than a\n    12\tproject, and an existing estimator for a shape of problem that recurs here means the\n    13\tanalysis is mostly written already.\n    14\t\n    15\t| skill | kind | standing | used on | what it is for |\n    16\t|---|---|---|---|---|\n    17\t| *(example)* `snowflake-holdout-pull` | ACCESS | staging | q-0031 | assembling a treated/control table from the warehouse |\n    18\t| *(example)* `did-checkout-eligibility` | METHOD | trusted | q-0031, q-0044 | DiD where a display rule, not randomisation, decides exposure |\n    19\t\n    20\t## Kinds\n    21\t\n    22\t- **ACCESS** — reaching a system. Warehouse connections, API clients, export paths,\n    23\t  wherever a result has to land. `technician` owns these.\n    24\t- **METHOD** — how this company does a kind of causal analysis. The estimator that worked\n    25\t  for a problem shape that recurs here, what varies between instances of it, and what was\n    26\t  tried first that did not work.\n    27\t- **REPORTING** — how a result gets written up so people here actually act on it.\n    28\t\n    29\t## Standing\n    30\t\n    31\t- **staging** — `.claude/skills-staging/`. Captured from one question, unproven. Offered\n    32\t  when it looks relevant; never assumed.\n    33\t- **trusted** — `.claude/skills/`. Auto-loaded. It got there by being **used on more than\n    34\t  one question**, or by having its output **checked mechanically** — the notebook ran\n    35\t  clean and its assertions held.\n    36\t\n    37\t`skills_used:` in each question record is what makes the first bar measurable. If nobody\n    38\twrites it, nothing can ever be promoted on evidence, and this library stops growing.\n    39\t\n    40\t**Approval is not a promotion criterion.** Most company analytics is agreed with and\n    41\twrong. A system that promoted skills because stakeholders liked the output would get\n    42\tprogressively better at being persuasive here, which is the exact failure this whole\n    43\tthing exists to prevent.\n    44\t"
+    },
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_01J4M6MM6s6k1jfFawzwCvpn",
+     "content": "wiki/\n  _templates/\n  concepts/\n  events/\n  experiments/\n  literature/\n  methods/\n  processes/\n  questions/\n  tables/\n  traps/\n  README.md"
+    }
+   ]
+  },
+  {
+   "role": "assistant",
+   "content": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "ErgCCpABCBEYAipA8PhGniHMrlrKXFOCOxcvbMOgVZI1ffzJyl80NX9ZKah+rPrtpiU5aD7J9VrkbxZ835F7WBhXjy6pdgsfzOGvrDIPY2xhdWRlLXNvbm5ldC01OABCCHRoaW5raW5nWiQwNjU0YzEzNC0wNTU4LTRhOWQtYjRkNi1mMjRjZjY2ZjdmOGaoAdqQ99QGEgxbQ7Uu/Wl4IxJmsMsaDIdzwgI+oAhE1O4ajyIwkGg+TbaoL234PfxE4/UMNbobUNGTjApFCg0fxb0N8GNtPIF4K1pm5xUsyn3Lmv2UKlWryrs31OEs8QSJhAjrGD1b67eVTcDlE8TDlrHW0ebVH5CjFNZeXG/UVXf/ojRGmkjisqQSlQF0IXssd7PYiIDZrYt1UVGFZOcBkdOy1iJw+mSAtNDzGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01XNdXKy1krnAnpWntbTyLyT",
+     "name": "glob",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "pattern": "wiki/concepts/*.md"
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01R9U93erqecwcWbPyoqWn8v",
+     "name": "glob",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "pattern": "wiki/events/*.md"
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01FerpLEYvKvacQ5ccctcedT",
+     "name": "glob",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "pattern": "wiki/experiments/*.md"
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_0199KFzvFXkGS7F4KTspUYDJ",
+     "name": "glob",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "pattern": "wiki/methods/*.md"
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_013kzdgw1vMWrbBGrNS5s6FK",
+     "name": "glob",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "pattern": "wiki/literature/*.md"
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01So8CcUSE33fYqQe15RjHP8",
+     "name": "grep",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "pattern": "skills_used",
+      "path": "wiki/questions",
+      "output_mode": "content"
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01W2jDayKHkKGUvr8TQ77GcR",
+     "name": "list_directory",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "path": ".claude/skills-staging"
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01REsQNVCrooZM3fteXw6ANZ",
+     "name": "list_directory",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "path": ".claude/skills"
+     }
+    }
+   ]
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_01XNdXKy1krnAnpWntbTyLyT",
+     "content": "No files found"
+    },
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_01R9U93erqecwcWbPyoqWn8v",
+     "content": "No files found"
+    },
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_01FerpLEYvKvacQ5ccctcedT",
+     "content": "No files found"
+    },
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_0199KFzvFXkGS7F4KTspUYDJ",
+     "content": "No files found"
+    },
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_013kzdgw1vMWrbBGrNS5s6FK",
+     "content": "No files found"
+    },
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_01So8CcUSE33fYqQe15RjHP8",
+     "content": "No matches found"
+    },
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_01W2jDayKHkKGUvr8TQ77GcR",
+     "content": ".claude/skills-staging/\n  .gitkeep"
+    },
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_01REsQNVCrooZM3fteXw6ANZ",
+     "content": ".claude/skills/\n  capturing-skills/\n  drawing-the-dag/\n  ingesting-raw/\n  reading-results/\n  running-an-interview/\n  writing-notebooks/\n  writing-reports/"
+    }
+   ]
+  },
+  {
+   "role": "assistant",
+   "content": [
+    {
+     "type": "text",
+     "text": "Status:\n\n**Questions** — none opened yet. `wiki/questions/` contains only the example row (q-0001, marked *(example)*) in INDEX.md; no actual question directories exist. Nothing open, nothing blocked, no notebooks/reports outstanding, no interviews in progress.\n\n**Skills pipeline** — `.claude/skills-staging/` is empty (only `.gitkeep`). `.claude/SKILLS.md` lists only the example rows (`snowflake-holdout-pull`, `did-checkout-eligibility`) — these are illustrative, not real. `.claude/skills/` holds the 7 process skills (capturing-skills, drawing-the-dag, ingesting-raw, reading-results, running-an-interview, writing-notebooks, writing-reports) — these are trusted-by-design tooling, not company-specific skills. No `skills_used` grep hits anywhere (nothing to check for promotion or staleness).\n\n**Counts** — concepts: 0, events: 0, experiments: 0, methods: 0, literature: 0.\n\n**Drift check** — both indexes are internally consistent (they contain only their documented example rows, clearly marked as such), so nothing needs fixing.\n\nThis is a fresh repository — no `/cb_ingest` has run and no question has been asked yet. Start with `/cb_ingest` if there's raw material to load, or `/cb_ask` to open the first question."
+    }
+   ]
+  }
+ ],
+ "agents": {},
+ "reads": {
+  "main": [
+   "wiki/questions/INDEX.md",
+   ".claude/SKILLS.md"
+  ]
+ },
+ "log": [
+  {
+   "t": "2026-09-06T20:08:54.193Z",
+   "kind": "user",
+   "agent": "analyst",
+   "text": "[/cb_status]\n\nRead `wiki/questions/INDEX.md`, then every `wiki/questions/*/*.md` frontmatter, and\nreport briefly:\n\n- each open question, its `state`, and **what it is blocked on**\n- any notebook or report issued but not returned\n- any question in `state: interviewing` with no confirmed edges yet\n- **any question with `dag_tested: no` that has an analysis notebook** — the graph is\n  still untested and nothing from it can be promoted\n- any method at `evidence: none-yet` whose design has now had time to run\n- counts: concepts, events, experiments, methods, literature pages\n\nOne line per question. No prose.\n\nThen **the skills pipeline**, because that half rots silently — read `.claude/SKILLS.md`\nand `grep -rn \"skills_used\" wiki/questions/`:\n\n- what is in staging, and how many questions each has actually been used on\n- **anything at two or more uses — that has met the promotion bar.** Name it and the\n  questions; the analyst decides, you do not promote it.\n- anything in staging that has sat unused since it was captured. It may be too narrow, or\n  named so nobody finds it.\n- any skill used in a question but missing from `.claude/SKILLS.md`, or the reverse\n\nIf `wiki/questions/INDEX.md` or `.claude/SKILLS.md` has drifted from the records, fix it.\nBoth are entry points, and a stale index is worse than none because people trust it."
+  },
+  {
+   "t": "2026-09-06T20:08:56.713Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "read_file",
+   "input": {
+    "file_path": "wiki/questions/INDEX.md"
+   }
+  },
+  {
+   "t": "2026-09-06T20:08:56.714Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "list_directory",
+   "input": {
+    "path": "wiki/questions"
+   }
+  },
+  {
+   "t": "2026-09-06T20:08:56.714Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "read_file",
+   "input": {
+    "file_path": ".claude/SKILLS.md"
+   }
+  },
+  {
+   "t": "2026-09-06T20:08:56.714Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "list_directory",
+   "input": {
+    "path": "wiki"
+   }
+  },
+  {
+   "t": "2026-09-06T20:09:00.761Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "glob",
+   "input": {
+    "pattern": "wiki/concepts/*.md"
+   }
+  },
+  {
+   "t": "2026-09-06T20:09:00.764Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "glob",
+   "input": {
+    "pattern": "wiki/events/*.md"
+   }
+  },
+  {
+   "t": "2026-09-06T20:09:00.765Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "glob",
+   "input": {
+    "pattern": "wiki/experiments/*.md"
+   }
+  },
+  {
+   "t": "2026-09-06T20:09:00.767Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "glob",
+   "input": {
+    "pattern": "wiki/methods/*.md"
+   }
+  },
+  {
+   "t": "2026-09-06T20:09:00.768Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "glob",
+   "input": {
+    "pattern": "wiki/literature/*.md"
+   }
+  },
+  {
+   "t": "2026-09-06T20:09:00.770Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "grep",
+   "input": {
+    "pattern": "skills_used",
+    "path": "wiki/questions",
+    "output_mode": "content"
+   }
+  },
+  {
+   "t": "2026-09-06T20:09:00.771Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "list_directory",
+   "input": {
+    "path": ".claude/skills-staging"
+   }
+  },
+  {
+   "t": "2026-09-06T20:09:00.771Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "list_directory",
+   "input": {
+    "path": ".claude/skills"
+   }
+  },
+  {
+   "t": "2026-09-06T20:09:06.649Z",
+   "kind": "text",
+   "agent": "main",
+   "text": "Status:\n\n**Questions** — none opened yet. `wiki/questions/` contains only the example row (q-0001, marked *(example)*) in INDEX.md; no actual question directories exist. Nothing open, nothing blocked, no notebooks/reports outstanding, no interviews in progress.\n\n**Skills pipeline** — `.claude/skills-staging/` is empty (only `.gitkeep`). `.claude/SKILLS.md` lists only the example rows (`snowflake-holdout-pull`, `did-checkout-eligibility`) — these are illustrative, not real. `.claude/skills/` holds the 7 process skills (capturing-skills, drawing-the-dag, ingesting-raw, reading-results, running-an-interview, writing-notebooks, writing-reports) — these are trusted-by-design tooling, not company-specific skills. No `skills_used` grep hits anywhere (nothing to check for promotion or staleness).\n\n**Counts** — concepts: 0, events: 0, experiments: 0, methods: 0, literature: 0.\n\n**Drift check** — both indexes are internally consistent (they contain only their documented example rows, clearly marked as such), so nothing needs fixing.\n\nThis is a fresh repository — no `/cb_ingest` has run and no question has been asked yet. Start with `/cb_ingest` if there's raw material to load, or `/cb_ask` to open the first question."
+  }
+ ],
+ "commits": 0,
+ "usage": {
+  "input": 5691,
+  "output": 1196,
+  "cacheRead": 17406
+ },
+ "lastCommand": "cb_status"
+}
