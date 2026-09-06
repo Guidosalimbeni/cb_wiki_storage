@@ -10,5 +10,4 @@ A stale index is worse than no index, because people trust it. `/cb_status` repa
 
 | id | what was asked | also called | state | outcome |
 |---|---|---|---|---|
-| q-0001 | *(example)* Did the March price change drive churn? | the March price thing | concluded | 2.1pp, later contradicted by the Q2 holdout — see the outcome log |
 | q-0001 | In relation to iagl_pwa inverse curve pricing treatment, how can I estimate the impact on bookings volume? | inverse curve pricing, PWA conversion flip | interviewing | — |
