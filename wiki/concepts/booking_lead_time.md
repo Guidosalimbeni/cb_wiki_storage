@@ -33,4 +33,8 @@ treatment assignment*. It is not thereby assumed exogenous to the *outcome*: whe
 booking propensity is continuous across the year-boundary is the RDD's continuity
 assumption, and needs checking against data, not asserted from an interview.
 {by:analyst on:2026-09-06}
+
+`data_mode: simulated` for q-0001: `observed: true` here is a design choice for the DAG
+notebook (we generate this variable and treat it as visible to the estimator), not yet a
+confirmed fact about what IAGL's systems record for real bookings.
 </content>
