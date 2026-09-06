@@ -22,4 +22,3 @@ because a future margin question will need it. Out of scope for this question's 
 
 `data_mode: simulated` for q-0001: `observed: true` is a design choice, unused by this
 question's estimator; kept for graph completeness only.
-</content>
