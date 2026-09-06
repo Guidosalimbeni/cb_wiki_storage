@@ -22,4 +22,3 @@ causal claims — see [[pay-with-avios-ba-holidays]].
 
 `data_mode: simulated` for q-0001: `observed: true` is a design choice, unused by this
 question's estimator; kept for graph completeness only.
-</content>
