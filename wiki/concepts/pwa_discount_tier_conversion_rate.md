@@ -30,4 +30,7 @@ a fixed two-week calendar window and gated only by whether the booking's departu
 in 2026 or 2027+. See [[2026-08-conversion-rate-flip-experiment]] for the full policy
 description. Population for q-0001 is restricted to this window — no before/after or
 other-window comparison is in scope, per analyst.
-</content>
+
+`data_mode: simulated` for q-0001: `observed: true` here is a design choice for the DAG
+notebook, generated as a deterministic function of `booking_lead_time` — not yet a
+confirmed fact about system observability.
