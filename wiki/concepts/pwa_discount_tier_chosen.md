@@ -33,4 +33,3 @@ tier chosen. {by:analyst on:2026-09-06}
 `data_mode: simulated` for q-0001: `observed: true` here is a design choice — generated so
 the DAG notebook can demonstrate the collider risk, not yet a confirmed fact about system
 observability.
-</content>
