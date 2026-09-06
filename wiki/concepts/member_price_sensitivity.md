@@ -24,4 +24,3 @@ deterministic on lead time, not on this trait). It matters because it is the rea
 false` here is a **design choice for the simulation** (we deliberately withhold it from
 the estimator to test whether the design still recovers the planted effect), not yet an
 established fact about whether this company could ever measure it.
-</content>
