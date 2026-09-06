@@ -19,4 +19,7 @@ confirmed_on: 2026-09-06
 Not the outcome for q-0001 (that is [[pwa_bookings]]). Recorded because
 [[2026-08-conversion-rate-flip-experiment]] lists it as touched by the treatment, and
 because a future margin question will need it. Out of scope for this question's estimate.
+
+`data_mode: simulated` for q-0001: `observed: true` is a design choice, unused by this
+question's estimator; kept for graph completeness only.
 </content>
