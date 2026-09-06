@@ -29,4 +29,8 @@ be conditioned on when estimating the effect of the schedule on `pwa_bookings`: 
 booking propensity, controlling for chosen tier risks opening a collider path and biasing
 the treatment effect on bookings. Flagged here so nobody builds a model that stratifies on
 tier chosen. {by:analyst on:2026-09-06}
+
+`data_mode: simulated` for q-0001: `observed: true` here is a design choice — generated so
+the DAG notebook can demonstrate the collider risk, not yet a confirmed fact about system
+observability.
 </content>
