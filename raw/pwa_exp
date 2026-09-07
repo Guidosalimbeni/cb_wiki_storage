@@ -1,0 +1,25 @@
+IAG loyalty is the company behind avios loyalty currency.
+one product is pay with avios for ba holidays.
+when a member is booking an holiday he can redeem some of his avios for a disocunt on the holiday ticket.
+he is presented to up to 9 options discount each of which is a percentage of the ticket as discount and each has a different conversion rate between cash and avios so that usually higher discount would have a more penalised conversion rate.
+
+it can go from 0.01 most favourable for the memerb to 0.004 least favorable.
+
+key metrics for the business are number of bookings made using the product, avios redeemed, cash , and the cost per avios calculated as the sum of cash in the window divided by sum of avios.
+
+we dont have the actual booking volume from ba haolidays indipendently of using avios or not.. that is hidden. what i mean is that we can see all members logged in activities , search and booking but not the non members bookings.
+
+# an experiment was run
+
+the first 2 weeks of august 2026 an experiment was run to flp the conversion rate, so for those 2 weeks the max discount became the most favourbale conversion rate for the user and min discount the least favourbale. the idea was to suffer likely a big cost that would have been an investiment to drive more booking nd ultimately keep the margin high.
+
+for iagl margin is sum of avios redeem in the period times 0.00659 - sum of cash
+
+usually the marginal margin is very small as the cpa usually is around 0.005 but for this idea and considering ba holidays is now part of iagl to take also the margin that ba holidays get which is 10% of the ticket price. the idea is that with the new calculated margin formula iagl + ba holidays and an attractive proposition to the members the experiment would have been successful
+
+# the assessment of experiment challenge
+
+the experiment did not have a split of a nd b group.
+the only thing was that the policy treatment applyed to all members for all route but only for booking future departure within 2026 and not further in the future.
+
+applying a DiD using temporal split.. same perios last year and a month before same perios last year as counterfactual unfortunately is biased as it turned out that same period last year was heavily contaminated by another change that happened last year.
