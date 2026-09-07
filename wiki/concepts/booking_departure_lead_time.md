@@ -29,7 +29,9 @@ it is the assumption the design will live or die on.
 
 ## Causes
 - [[member_booking_volume]] — long-lead and near-term trips fill up on different seasonal
-  rhythms. Proposed.
+  rhythms. The analyst described 2027 departures as a distinct market (long-haul, planned,
+  school holidays) with almost no overlap with near-term 2026 bookings, which is a claim
+  that lead time drives booking behaviour. {by:analyst on:2026-09-07}
 - [[avios_balance]] — plausibly, members planning far ahead have accumulated differently.
   Proposed, weak.
 
