@@ -45,4 +45,8 @@ the change. Flagged as unclassified/unknown, see ingest summary.
 ## Known threat to naive analysis
 A same-period-last-year (Aug 2025) DiD counterfactual was attempted and found to be
 **biased**: that period was contaminated by a separate, different change made last year.
-See [[2026-08-avios-conversion-flip]] for the assessment write-up.
+The 2025 change is not named or dated in the source.
+
+See [[2026-08-conversion-rate-flip]] in `wiki/experiments/` for the design and the
+(currently absent) readout, [[pay-with-avios-ba-holidays]] for how the product works, and
+[[iagl-pwa-metrics]] for the margin and cost-per-Avios formulas.
