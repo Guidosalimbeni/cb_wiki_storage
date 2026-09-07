@@ -2,7 +2,7 @@
  "id": "t-20260907173831-54wp",
  "title": "q-0001 · in relation to the change in price configuration for pwa in august 2026, no random experiments were conducted, h",
  "created": "2026-09-07T17:38:31.234Z",
- "updated": "2026-09-07T17:41:48.888Z",
+ "updated": "2026-09-07T17:43:57.978Z",
  "awaiting": "answer",
  "main": [
   {
@@ -528,6 +528,101 @@
      }
     }
    ]
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_01SkqserTRBv3hKvBzVPwXsQ",
+     "content": "The analyst answered:\n\nQ: During those two weeks, how plausible is it that a member **moved their departure date into 2026** — or brought a trip forward — to get the better conversion rate?\nA: Unlikely"
+    }
+   ]
+  },
+  {
+   "role": "assistant",
+   "content": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01W5NmTyqab9z7wGRXWwuy2U",
+     "name": "invoke_subagent",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "agent": "interviewer",
+      "resume": true,
+      "task": "The analyst answered:\n\nQ: During those two weeks, how plausible is it that a member moved their departure date into 2026 — or brought a trip forward — to get the better conversion rate?\nA: \"Unlikely\" — by August, people booking 2027 departures are a different kind of trip (long-haul, planned, school holidays) with almost no overlap with near-term 2026 bookings.\n\nContinue. Also, in your next turn please state briefly where you think the graph stands and what remains — I owe the analyst a budget checkpoint alongside relaying your next question. One question per turn, 2-4 concrete options."
+     }
+    }
+   ]
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_01W5NmTyqab9z7wGRXWwuy2U",
+     "content": "Seven nodes written into `wiki/concepts/` — the first graph here, under `graph: pwa-pricing`.\n\n**Where the graph stands**\n\n- **Treatment** `pwa_conversion_rate_flip`, fully determined by two pre-treatment facts: `booking_in_flip_window` and `departure_year_within_2026`. Assignment is a **deterministic rule**, not randomisation — and confirmed as such.\n- **Outcome** is now `member_booking_volume` (all member bookings), with `avios_redeeming_bookings` as a subset beneath it. The split between them is `## Computed from` — arithmetic — so a shift in redemption mix is explicitly *not* a finding about volume. That guard is now in the wiki.\n- **Main threat** is `booking_departure_lead_time`: it sits upstream of both the assignment variable and the outcome, and it encodes your \"different kind of trip\". This is a parallel-trends problem, not a classic confounder — nothing about lead time caused the policy.\n- **`seasonal_holiday_demand`** is marked `observed: false` as a *proposal*, needing a source. It only breaks the design if it moved 2026 and 2027 departures **differently** in that fortnight; if it moved them together, DiD absorbs it.\n- Shape of the answer: difference-in-differences across the departure-year boundary, on total member bookings, with the redeeming/non-redeeming split as the substitution check — and the Aug-2025 route explicitly ruled out as already-known-biased.\n\n**What remains:** one event sweep, then it's testable. Anticipation effects I can test in the notebook rather than ask about.\n\n**Checkpoint — my recommendation: one more question, then proceed.** The gap I can't close by reading is what else was going on in that fortnight.\n\n---\n\n**QUESTION FOR THE ANALYST:**\n\n> Other than the flip itself, did anything else change between roughly July and September 2026 that could move BA Holidays member bookings — and did it hit 2026 and 2027 departures differently?\n\n**Options:**\n1. **Nothing else that I know of** — the flip was the only change in that period.\n2. **Yes — marketing or promotional activity** ran alongside it (campaign, sale, comms push).\n3. **Yes — a pricing, inventory or product change** on BA Holidays itself (ticket prices, route availability, site changes).\n4. **I don't know — nobody has checked.** *(Then I'll write it as an open risk on the record and the notebook will test for it.)*"
+    }
+   ]
+  },
+  {
+   "role": "assistant",
+   "content": [
+    {
+     "type": "tool_use",
+     "id": "toolu_012tL6itRfmfvXjdxwqX8gJr",
+     "name": "ask_analyst",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "questions": [
+       {
+        "header": "Other changes",
+        "question": "Other than the flip itself, did anything else change between roughly July and September 2026 that could move BA Holidays member bookings — and did it hit 2026 and 2027 departures differently?",
+        "options": [
+         {
+          "label": "Nothing else I know of",
+          "description": "The flip was the only change in that period."
+         },
+         {
+          "label": "Marketing / promo activity",
+          "description": "Yes — a campaign, sale or comms push ran alongside it."
+         },
+         {
+          "label": "Pricing/product change",
+          "description": "Yes — a pricing, inventory or product change on BA Holidays itself (ticket prices, route availability, site changes)."
+         },
+         {
+          "label": "Nobody has checked",
+          "description": "I don't know. Write it as an open risk on the record and let the notebook test for it."
+         }
+        ]
+       },
+       {
+        "header": "Checkpoint",
+        "question": "Interview budget checkpoint — the interviewer recommends proceeding after this answer. What would you like?",
+        "options": [
+         {
+          "label": "Proceed (recommended)",
+          "description": "Stop interviewing after this answer, get the reviewer's verdict and the DAG notebook written."
+         },
+         {
+          "label": "Keep going",
+          "description": "A few more interview questions to tighten the graph before anything is built."
+         },
+         {
+          "label": "Park it",
+          "description": "Stop here; leave the question open with what we have."
+         }
+        ]
+       }
+      ]
+     }
+    }
+   ]
   }
  ],
  "agents": {
@@ -919,6 +1014,240 @@
       "text": "Recorded: `data_mode: simulated`. That's an honest and useful place to start — it will test that the design runs and that the estimator recovers an effect we plant. I've written into the record, in bold, that **nothing from this question is evidence about the company**, and that `observed: true/false` on the nodes below is a design choice rather than a fact about your systems.\n\nNow the thing that decides whether this is identifiable at all. The only untreated group in existence is **bookings departing 2027+**. For that group to be a valid control, the flip must not have changed *which departure date people book*. If a member weighing a March-2027 holiday saw a much richer Avios rate on a December-2026 one and moved, then the treated group is inflated and the control group is depleted by the same people — and the boundary comparison overstates the effect roughly twice over. It would also mean the \"extra bookings\" were pulled forward rather than created.\n\nThis is the one thing the wiki cannot tell me and you can.\n\n---\n\n**QUESTION FOR THE ANALYST:**\n\n> During those two weeks, how plausible is it that a member **moved their departure date into 2026** — or brought a trip forward — to get the better conversion rate?\n\n**Options:**\n1. **Very plausible** — members are flexible on dates and the rate difference was large and visible at the point of choosing. Pull-forward is a real risk.\n2. **Unlikely** — by August, people booking 2027 departures are a different kind of trip (long-haul, planned, school holidays) with almost no overlap with near-term 2026 bookings.\n3. **Possible but small** — some flexibility exists, but the rate isn't shown prominently enough at date-selection for most members to react.\n4. **Not sure — but members were never told the flip was happening**, so they couldn't have deliberately gamed it."
      }
     ]
+   },
+   {
+    "role": "user",
+    "content": "The analyst answered:\n\nQ: During those two weeks, how plausible is it that a member moved their departure date into 2026 — or brought a trip forward — to get the better conversion rate?\nA: \"Unlikely\" — by August, people booking 2027 departures are a different kind of trip (long-haul, planned, school holidays) with almost no overlap with near-term 2026 bookings.\n\nContinue. Also, in your next turn please state briefly where you think the graph stands and what remains — I owe the analyst a budget checkpoint alongside relaying your next question. One question per turn, 2-4 concrete options."
+   },
+   {
+    "role": "assistant",
+    "content": [
+     {
+      "type": "thinking",
+      "thinking": "",
+      "signature": "CAIStwkKjgEIERgCKkB/4d4xeop6eIYbSSXO6i+xXBE/Qg1UF/GsbwBGALt2koWPxR1LP/395JS6p1RNc1yVcq8ScJXVbVwLDi9WQUcGMg1jbGF1ZGUtb3B1cy01OAFCCHRoaW5raW5nWiQwNjU0YzEzNC0wNTU4LTRhOWQtYjRkNi1mMjRjZjY2ZjdmOGaoAfru+9QGEgyyRB545O3r+2BuTbUaDJR2s/Lhn0LjzIIytSIwW7Mb/cPzz02HSs0/xI8GKSvQZZM2/oWOqR3sNUJL6Xvur1TniHgXVmS6LOCVnhO6KtUHcRkO1/hqpROhNqFb8JiGrfEWawd0r3GICwJh86A6+K3cLZv5KSEPUdh12N3YeR0QvrJNV3iQfPvglPnEpzjKmrHLInmNlrVuVLRVEfGWxL9zllAtZTt+85lQ9b37KWp/CWTWDoWAnY7qGAF91RiLo0/MSIYCpD+TzfLhVbm9RQSjTcXg6LwhwCAIe+wET3EeHkz1nhHAffXcbF8j5SX7u9zFLlYZ9CLYWs5hY6mFa8wXDt/3EUxf3+MX2bB/1DAjUus2iK9l7KW8obUWP0ecOhUEyRV1j1OTBJdYLADB/zmdG21LN2BpCv8wBPd8AmlXkibV/0mthhpIlmBiEI+hQD2EKv0HEv+N+QKwk4MUaBdlgS+pQTbDe5ghjPvp1uu2K5kQrJzig2oKx04qO320UIMaS3bABAWaOfpX2tCecvv+G9zR8oMFrWJCc65GlrO13U0YHrSTgjI0S+IYij8D0nysIZzy6xcMw1ETf6I60qscku1+2S1xPrsZ3isT8iwbK/WK30OTvVkYVkvNNnX992dJdMFzDJ6PIfVtliQM76R3rgTBgw2aULQfegXFw0C0YigqTzKnP/H9F7gwyWQEuR6+/Twvma28CJGGoo4+q8MTUcAB/Potn+n2rEaSP+JI3zRs1Y6f5b64S6oxmCT94bBfHsJLq5c35K6F4Y6vPtcPW2lZ5qM36R2FImTm+TCg3Tnl2YwUDYKo+OwnI4yIkyoD6hCmG+1qSQVt4ftlLEWndUn+QsCGAGSKwL9nl7fFH5bAgqCPK4McREFW23H+xoayoE1yoVaypRDLqU2Zh+SKD+9f0ilQrtO+WQXkpuRilHrro78F8k9jxOI+fpXbYSn+/c4A2BK1YDxVoKVh2LW22hUR62zf//MWJsVZV+WZ3V+N0rmSSCWqs/SZkECLTlyBvzpRHX61OTF0XydV1S6G8uzf2biGTAPv0lZwYnmjoiylSSSjZzY9iOc+RyrZljMvRkCnA38v8ooPPmc62k+pmxlAKR5TY5p227frcDHsY1AS2Vf3Qtnx+45Eo/8pgxpzRL+B7L6Am9+82BIfus1dVudZUBEOlR5jYHVYT7Tua8Byl9gNWmFIMJ8mFoyOTpXonbpbtCqpYb9mZh27R5Pi07PSeWZL8JBcKyD6+Af7bV7zNnqduVJ9TA1t6yNY+/k8phPEU6SvtdQqefKuotaJRMMHi8qV4XREixp3RnXeQE5CrwTPkLugyetTqwIGEy5Zgnty4yiyYtSAhfsLhw1BBs9ZuPOLHhSsoHetVP6rRdVv1abCgq2h90UewhgAodd29z/OGAE="
+     },
+     {
+      "type": "tool_use",
+      "id": "toolu_01N3pR16md68ZvJ9eiReAaQL",
+      "name": "load_skill",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "name": "drawing-the-dag"
+      }
+     }
+    ]
+   },
+   {
+    "role": "user",
+    "content": [
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_01N3pR16md68ZvJ9eiReAaQL",
+      "content": "# Skill: drawing-the-dag (trusted) — .claude/skills/drawing-the-dag/SKILL.md\n\n---\nname: drawing-the-dag\ndescription: How to write causal structure into wiki/concepts — creating nodes, adding edges, marking observability and timing. Use during interviews whenever structure is being established.\n---\n\n# Drawing the graph\n\nThe graph is markdown files in `wiki/concepts/`, one per variable. It is the thing every\nverdict is computed from, so it is worth getting the mechanics exactly right.\n\n## Before you create a node, look for it\n\n**Read `wiki/concepts/` and check whether this quantity already has one.** Match on\n`label:` and the prose, not just the filename — the same variable arrives wearing a\ndifferent word every time somebody new asks about it. \"Drop-off\", \"leavers\", \"attrition\"\nand `churn_30d` might be one node or four, and getting that wrong is the main way this\ngraph rots into something nobody trusts.\n\nThe test from `wiki/README.md` decides it: **same quantity, same grain, same timing** is\none concept. If any of the three differs they are two — `churn_30d` and `churn_90d` are\ngenuinely separate and can sit at opposite ends of the same edge.\n\nIf it exists, **extend it**: add the edge, add what was learned, add the backlink. Do not\ncreate a near-duplicate because the existing node is named awkwardly; rename it if the\nanalyst agrees, or live with the name.\n\nIf it does not exist, create it — and say so in the conversation, so the analyst can\nobject to the name now rather than in a year when six things point at it.\n\n## A node\n\n```markdown\n---\nid: churn_30d\nlabel: 30-day churn\nobserved: true\nmeasured_at: post_treatment\ngraphs: [retention, pricing]\ntags: [dag]\nsource: interview/2026-03-04\nconfirmed_by: guido\nconfirmed_on: 2026-03-04\n---\n\n## Caused by\n- [[price_change]] — repricing shifts cancellation within the billing cycle. {by:guido on:2026-03-04}\n\n## Causes\n- [[net_revenue]] {by:guido on:2026-03-04}\n\n## Computed from\n- [[cancellations_30d]], [[active_base]] — ratio.\n\nProse. What this actually is. The gotcha nobody remembers.\n```\n\nThe **heading carries direction and kind.** Obsidian's graph view is undirected and\nuntyped, so wikilinks alone are not enough — that is why the structure does the work.\n\n## The three headings\n\n`## Caused by` — incoming causal. `## Causes` — outgoing causal. Declare an edge from\neither end; both are valid.\n\n`## Computed from` — **arithmetic only.** `net_revenue = revenue × (1 − churn)` is\nexactly true and carries zero causal content. It must never appear under a causal\nheading, because a path running through arithmetic edges makes an accounting identity\nlook like a finding, and that error is invisible once it is in the graph.\n\n## The three fields that matter most\n\n**`measured_at`** — before or after the thing we are calling treatment. This is what\nstops a mediator being used as a control. No semantic layer records it; it comes from\nthe analyst, in conversation, and it is the most valuable field in the wiki.\n\n**`observed`** — `false` is a *claim*, and it needs a `source`. It is also the material\nrefusals are made of: an unobserved node on an unblockable backdoor path is exactly what\nmakes a question unanswerable, and naming it is what makes the refusal useful.\n\n**`graphs`** — which named areas this belongs to. Membership lives in the node, never in\na separate manifest, so nothing can fall out of sync.\n\n## The `{...}` span\n\n`{by:guido on:2026-03-04}` after the reasoning. **No span means nobody has confirmed\nthis edge** — it is a proposal, and any verdict resting on it is provisional.\n\nVisible rather than an HTML comment, deliberately: provenance you cannot see is\nprovenance nobody maintains, and a hidden marker breaks the moment someone hand-edits\nthe file in a text editor.\n\n## Rules\n\n**Every node gets `tags: [dag]`, and nothing else in the wiki does.** It exists for one\npurpose: filtering the Obsidian graph view to `tag:#dag` so the causal graph can be seen\nwithout the tables, events and question records on top of it. Do not invent further tags\n— the headings already carry direction and kind.\n\n**Adding an edge during an interview is fine.** The analyst is right there.\n\n**Changing a confirmed edge means asking.** Reversing something confirmed last month is\na claim that the earlier judgement was wrong, and it may invalidate a past analysis.\nStop and say so.\n\n**Deleting a node or edge always means asking.**\n\n**The reasoning line is not decoration.** It is what a future session uses to decide\nwhether the edge still holds. \"Because the billing cycle means a price change lands\nwithin 30 days\" survives; \"obviously related\" does not.\n\n**One concept per causal variable, not per column.** If two columns in different tables\nmean the same quantity at the same grain with the same timing, they are one concept with\ntwo places it is stored. If any of those three differ, they are two concepts.\n"
+     }
+    ]
+   },
+   {
+    "role": "assistant",
+    "content": [
+     {
+      "type": "thinking",
+      "thinking": "",
+      "signature": "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"
+     },
+     {
+      "type": "text",
+      "text": "The answer helps and hurts, and it's worth being explicit about both halves: no pull-forward means the 2027+ group stays genuinely untreated (good — the comparison survives). But \"almost no overlap, a different kind of trip\" is precisely the **parallel-trends** problem: a control group that differs structurally from the treated one. That trade-off is now the centre of the design.\n\nLet me draw what we have. This is the first graph in `wiki/concepts/`."
+     },
+     {
+      "type": "tool_use",
+      "id": "toolu_015Q6KLbXsEtKfwUNLV9erYk",
+      "name": "write_file",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "file_path": "wiki/concepts/pwa_conversion_rate_flip.md",
+       "content": "---\nid: pwa_conversion_rate_flip\nlabel: PWA conversion-rate flip (treatment)\nobserved: true\nmeasured_at: treatment\ngraphs: [pwa-pricing]\ntags: [dag]\nsource: raw/pwa_exp; interview/2026-09-07\nconfirmed_by: analyst\nconfirmed_on: 2026-09-07\n---\n\nBinary policy exposure at the level of a **booking**. During 1–14 August 2026 the mapping\nbetween discount tier and Avios-to-cash conversion rate was inverted: the maximum discount\ntier carried the *most* favourable rate (0.01) instead of the least (0.004). Event page:\n[[2026-08-conversion-rate-flip-experiment]].\n\nA booking is exposed if and only if it was made in the window **and** has a departure date\nwithin 2026. There was no member-level or route-level split.\n\n**Data mode is `simulated` for q-0001.** `observed: true` here is a design choice for the\nsimulation, not a verified fact about the warehouse. {q:q-0001 on:2026-09-07}\n\n## Caused by\n- [[departure_year_within_2026]] — the departure-date boundary is the entire assignment\n  rule; nothing else determined exposure. {by:analyst on:2026-09-07}\n- [[booking_in_flip_window]] — exposure also requires the booking to fall in 1–14 Aug 2026.\n  {by:analyst on:2026-09-07}\n\n## Causes\n- [[avios_redeeming_bookings]] — a richer rate at the top of the ladder makes redeeming\n  more attractive, so more member bookings are expected to involve a redemption. This is\n  the business's stated rationale; proposed, not yet confirmed.\n- [[member_booking_volume]] — the investment case was that better redemption terms would\n  *create* bookings, not just change how existing ones are paid for. This edge is the\n  whole question. Proposed, not yet confirmed.\n\n## Questions that turned on this\n- [[q-0001]] — how to estimate the effect of the flip on booking volume.\n"
+      }
+     },
+     {
+      "type": "tool_use",
+      "id": "toolu_01LnMwEFsS9VpMp9u13VYpEr",
+      "name": "write_file",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "file_path": "wiki/concepts/departure_year_within_2026.md",
+       "content": "---\nid: departure_year_within_2026\nlabel: Departure date falls within 2026\nobserved: true\nmeasured_at: pre_treatment\ngraphs: [pwa-pricing]\ntags: [dag]\nsource: raw/pwa_exp; interview/2026-09-07\nconfirmed_by: analyst\nconfirmed_on: 2026-09-07\n---\n\nWhether the booking's **departure date** is inside 2026 (treated) or 2027 or later\n(untreated). Fixed at the moment of booking, so it is measured before treatment applies.\n\nThis is the **assignment mechanism**. It is not randomised, and it is the only boundary\nthat exists in the data.\n\nThe analyst confirmed there is no meaningful **pull-forward**: members did not move\ndeparture dates into 2026 to chase the better rate, because by August a 2027 departure is\na different kind of trip (long-haul, planned, school holidays) with almost no overlap with\nnear-term 2026 bookings. {by:analyst on:2026-09-07}\n\nThat confirmation does two opposite things, and both matter:\n\n- **Good:** no edge runs from [[pwa_conversion_rate_flip]] back into this node, so the\n  2027+ group is genuinely untreated and is not depleted by the treatment.\n- **Bad:** \"a different kind of trip\" is the parallel-trends threat. The two groups differ\n  systematically, so their booking volumes need not move together in the absence of the\n  flip. See [[booking_departure_lead_time]].\n\n## Causes\n- [[pwa_conversion_rate_flip]] — determines exposure. {by:analyst on:2026-09-07}\n- [[booking_departure_lead_time]] — arithmetically and behaviourally, a 2027 departure\n  booked in August 2026 is a long-lead trip. {by:analyst on:2026-09-07}\n\n## Questions that turned on this\n- [[q-0001]]\n"
+      }
+     }
+    ]
+   },
+   {
+    "role": "user",
+    "content": [
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_015Q6KLbXsEtKfwUNLV9erYk",
+      "content": "Created wiki/concepts/pwa_conversion_rate_flip.md (commit fa03bcc)"
+     },
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_01LnMwEFsS9VpMp9u13VYpEr",
+      "content": "Created wiki/concepts/departure_year_within_2026.md (commit 8586a3f)"
+     }
+    ]
+   },
+   {
+    "role": "assistant",
+    "content": [
+     {
+      "type": "tool_use",
+      "id": "toolu_01NWDgTjZsiWY7LczZU44bEk",
+      "name": "write_file",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "file_path": "wiki/concepts/member_booking_volume.md",
+       "content": "---\nid: member_booking_volume\nlabel: Member booking volume (all logged-in member BA Holidays bookings)\nobserved: true\nmeasured_at: post_treatment\ngraphs: [pwa-pricing]\ntags: [dag]\nsource: interview/2026-09-07\nconfirmed_by: analyst\nconfirmed_on: 2026-09-07\n---\n\nCount of BA Holidays bookings made by logged-in members, **whether or not Avios were\nredeemed**, at the grain of booking-date × departure-year-group.\n\nThe analyst confirmed in interview that all member bookings are visible, redeeming or not.\nAn earlier reading of `raw/pwa_exp` had this wrong. {by:analyst on:2026-09-07}\n\n**This is the outcome q-0001 actually wants.** [[avios_redeeming_bookings]] is a subset of\nit, and using the subset alone cannot tell an increase in bookings apart from members\nswitching into redeeming on bookings they would have made anyway.\n\nNot observed, and deliberately not a node here: *non-member* BA Holidays bookings. Total\nBA Holidays booking volume is therefore not an available outcome, and non-members are not\navailable as a control group. See [[pay-with-avios-ba-holidays]].\n\n## Caused by\n- [[pwa_conversion_rate_flip]] — the investment case. Proposed, not yet confirmed.\n- [[seasonal_holiday_demand]] — August demand patterns move bookings regardless of policy.\n  Proposed.\n- [[booking_departure_lead_time]] — long-lead and near-term trips are booked at different\n  rates through the year. Proposed.\n\n## Computed from\n- [[avios_redeeming_bookings]] plus non-redeeming member bookings. **Arithmetic, not\n  cause.** A shift in the split between the two is a mix change and is not by itself\n  evidence of incremental volume.\n\n## Questions that turned on this\n- [[q-0001]]\n"
+      }
+     },
+     {
+      "type": "tool_use",
+      "id": "toolu_019LMfgybKKLWxvw31n6LNbB",
+      "name": "write_file",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "file_path": "wiki/concepts/avios_redeeming_bookings.md",
+       "content": "---\nid: avios_redeeming_bookings\nlabel: Member bookings that redeemed Avios\nobserved: true\nmeasured_at: post_treatment\ngraphs: [pwa-pricing]\ntags: [dag]\nsource: raw/pwa_exp; interview/2026-09-07\nconfirmed_by: analyst\nconfirmed_on: 2026-09-07\n---\n\nCount of member bookings on which Avios were redeemed. A **strict subset** of\n[[member_booking_volume]].\n\nThis is the metric the business calls \"bookings made using the product\". It is the one\nmost likely to move under the flip, and the one most likely to make the experiment look\nsuccessful without any incremental holiday being sold — because a better rate gives\nmembers who were booking anyway a reason to pay with Avios.\n\n## Caused by\n- [[pwa_conversion_rate_flip]] — a better rate at the top of the ladder makes redeeming\n  more attractive. Proposed, not yet confirmed.\n- [[member_booking_volume]] — more bookings mechanically give more opportunities to\n  redeem. Proposed.\n- [[avios_balance]] — a member cannot redeem what they do not hold. Proposed.\n\n## Questions that turned on this\n- [[q-0001]]\n"
+      }
+     }
+    ]
+   },
+   {
+    "role": "user",
+    "content": [
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_01NWDgTjZsiWY7LczZU44bEk",
+      "content": "Created wiki/concepts/member_booking_volume.md (commit 31a7e37)"
+     },
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_019LMfgybKKLWxvw31n6LNbB",
+      "content": "Created wiki/concepts/avios_redeeming_bookings.md (commit 5a113ce)"
+     }
+    ]
+   },
+   {
+    "role": "assistant",
+    "content": [
+     {
+      "type": "tool_use",
+      "id": "toolu_01ShSJEQ1uveWWSeCQCLXUUf",
+      "name": "write_file",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "file_path": "wiki/concepts/booking_departure_lead_time.md",
+       "content": "---\nid: booking_departure_lead_time\nlabel: Lead time between booking date and departure date\nobserved: true\nmeasured_at: pre_treatment\ngraphs: [pwa-pricing]\ntags: [dag]\nsource: interview/2026-09-07\nconfirmed_by: analyst\nconfirmed_on: 2026-09-07\n---\n\nDays between when the booking was made and when the trip departs.\n\nThis node exists because of one thing the analyst said: bookings departing in 2027+ are\n\"a different kind of trip — long-haul, planned, school holidays\". Lead time is the\nvariable that difference runs through, and it sits **upstream of both the assignment\nvariable and the outcome**, which makes it the main threat to the departure-date\ncomparison.\n\nIt is not a confounder in the classic sense — nothing about lead time caused the *policy*\nto be flipped. But it makes the treated and untreated groups structurally different, so\ntheir booking volumes need not trend together. That is the parallel-trends assumption, and\nit is the assumption the design will live or die on.\n\n## Caused by\n- [[departure_year_within_2026]] — a 2027 departure booked in Aug 2026 is by construction\n  a long-lead booking. {by:analyst on:2026-09-07}\n\n## Causes\n- [[member_booking_volume]] — long-lead and near-term trips fill up on different seasonal\n  rhythms. Proposed.\n- [[avios_balance]] — plausibly, members planning far ahead have accumulated differently.\n  Proposed, weak.\n\n## Questions that turned on this\n- [[q-0001]]\n"
+      }
+     },
+     {
+      "type": "tool_use",
+      "id": "toolu_012xxf5CHy1HETUUuxMVaFRv",
+      "name": "write_file",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "file_path": "wiki/concepts/seasonal_holiday_demand.md",
+       "content": "---\nid: seasonal_holiday_demand\nlabel: Seasonal holiday demand\nobserved: false\nmeasured_at: concurrent\ngraphs: [pwa-pricing]\ntags: [dag]\nsource: interview/2026-09-07\nconfirmed_by: null\nconfirmed_on: null\n---\n\nUnderlying demand for holidays in the calendar period — school terms, pay cycles, weather,\ncompetitor pricing, macro conditions. Not measured directly anywhere in our data.\n\nMarked `observed: false` as a **proposal**, not yet an established claim: no source has\nconfirmed that IAGL holds no demand index. If one exists it should be recorded here,\nbecause an unobserved common driver that hits 2026 and 2027 departures *differently* is\nwhat breaks the parallel-trends assumption behind the departure-date comparison.\n\nIt only threatens the design if it moves the two departure-year groups differently during\n1–14 Aug 2026. If it moves them together, the difference-in-differences absorbs it.\n\n## Causes\n- [[member_booking_volume]] — proposed.\n- [[avios_redeeming_bookings]] — proposed, via booking volume.\n\n## Questions that turned on this\n- [[q-0001]]\n"
+      }
+     }
+    ]
+   },
+   {
+    "role": "user",
+    "content": [
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_01ShSJEQ1uveWWSeCQCLXUUf",
+      "content": "Created wiki/concepts/booking_departure_lead_time.md (commit 5d3e212)"
+     },
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_012xxf5CHy1HETUUuxMVaFRv",
+      "content": "Created wiki/concepts/seasonal_holiday_demand.md (commit 22e513b)"
+     }
+    ]
+   },
+   {
+    "role": "assistant",
+    "content": [
+     {
+      "type": "tool_use",
+      "id": "toolu_014nAj2xH2kU3S3TGyxXwnvD",
+      "name": "write_file",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "file_path": "wiki/concepts/booking_in_flip_window.md",
+       "content": "---\nid: booking_in_flip_window\nlabel: Booking made during 1–14 August 2026\nobserved: true\nmeasured_at: pre_treatment\ngraphs: [pwa-pricing]\ntags: [dag]\nsource: raw/pwa_exp\nconfirmed_by: analyst\nconfirmed_on: 2026-09-07\n---\n\nWhether the booking date falls inside the two-week flip window. Together with\n[[departure_year_within_2026]] it fully determines [[pwa_conversion_rate_flip]].\n\nOpen point: the source does not say whether the flip was **announced** to members. If it\nwas, bookings could have been delayed into the window or rushed before it ended, which\nwould show as a dip immediately before 1 August and a spike immediately after 14 August.\nThat is testable in the notebook without asking anyone.\n\n## Causes\n- [[pwa_conversion_rate_flip]] {by:analyst on:2026-09-07}\n\n## Questions that turned on this\n- [[q-0001]]\n"
+      }
+     },
+     {
+      "type": "tool_use",
+      "id": "toolu_01Wz9ASW4ST99Cgy8KY4MtZc",
+      "name": "write_file",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "file_path": "wiki/concepts/avios_balance.md",
+       "content": "---\nid: avios_balance\nlabel: Member's Avios balance at time of booking\nobserved: true\nmeasured_at: pre_treatment\ngraphs: [pwa-pricing]\ntags: [dag]\nsource: interview/2026-09-07\nconfirmed_by: null\nconfirmed_on: null\n---\n\nHow many Avios the member holds when booking. A member cannot redeem what they do not\nhold, so this gates whether the flip could affect them at all — and it is a natural\nsubgroup for a heterogeneous-effect check.\n\n`observed: true` is assumed from the fact that IAGL runs the currency; **not yet confirmed\nby the analyst**, and under q-0001 the data is simulated in any case.\n\n## Causes\n- [[avios_redeeming_bookings]] — proposed.\n\n## Caused by\n- [[booking_departure_lead_time]] — proposed, weak.\n\n## Questions that turned on this\n- [[q-0001]]\n"
+      }
+     }
+    ]
+   },
+   {
+    "role": "user",
+    "content": [
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_014nAj2xH2kU3S3TGyxXwnvD",
+      "content": "Created wiki/concepts/booking_in_flip_window.md (commit 674354d)"
+     },
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_01Wz9ASW4ST99Cgy8KY4MtZc",
+      "content": "Created wiki/concepts/avios_balance.md (commit 5aaab73)"
+     }
+    ]
+   },
+   {
+    "role": "assistant",
+    "content": [
+     {
+      "type": "thinking",
+      "thinking": "",
+      "signature": "CAIS8gcKjgEIERgCKkDZ6jqeXIBQvizisMhPOYUJQ36D3GQ0Q836U/Vr5kQmAPDmfbHAGJs7JbJYjCo6c0g/JY9agt4hYVLKvtc/JeOtMg1jbGF1ZGUtb3B1cy01OAFCCHRoaW5raW5nWiQwNjU0YzEzNC0wNTU4LTRhOWQtYjRkNi1mMjRjZjY2ZjdmOGaoAcvv+9QGEgwl8roKgeslm3viRWgaDI+621Fkdnh01CVzeiIw+8fihkeLqgOXvkdR2knj/T3OSBs84RLzji2XpGlPPGhZ+LJuV7hW1kzYvpmpm7+CKpAGdmfzdXQxJi7EpsJcoK/uOzaxPOaJIjE4u1vqtRQ/gBIiVOcDolbBDbOMiCJ9ESr1kSUkgYMf6846Z6u/ZBixJYnCeCRljSOmdIR/C0+3enyVzsAF3garyk64AEm+v2wpe+ByVp5uFRezErctjnrDpgJZckAeV5t0NbbAAj8eRV1u6eIfOLre/2k9aoYQ38KT8nHhF6jO78OlJmX9r7pTaUBUjYeCXTrO2iQ73BHyAFCDkq0o9daHvqGpxz/Fh8sZuTKhufZc8K0JZbogAslNbfLsI69/zcoGyZNV5dS6IDf667yYh2evAnc/mfLKiTwtO7WrhkiYtbblouR0TIeP7mv7/innCKQpd9zx9P2GpU7IHBSo/XnYKlq2/z9YzwO4W/m5iXWHgGf8AVzTa3M8R/+uhlVHtpEjCYq+i8WiywXjwfWSgVEpTaRl3AGFbqKicA2v692eGIeBrdTLSzn7ZgDktrkqnIu7gtRLyPTuqWgFFLTSlKQgAziXqG1wBQm0ihpXoS8MbHnKvFdSZykLVdVNnW4Bo8LizZxENo3woaPN7b+4fn/To+gy4bI1wdR/d3wGuRAILI+MkYod7JC2dPPOlEYsEAjcQ0SgLfE1QocblJADEEigwn4EooL3LN7M8UCPOgGsbMBlBITuiQOSRHBomoOghM6BWgGDCBuQrFIIIr/Z1JwM9TGv/7ptxdKBR+qqcEBBEJknsUMYPkUkXE0lmBOLU3FfDqGryIr6QJBW1dGnjb9wdNez4UPR1Qa07b6ynGpwNe+Ei5iuC+azPblao5Z4tGc/67UbnKSIsTFpqD1FnVQIW2vU9HfuBt3O69DcrA5rCYQacO3AhiXysru+WUVVQLlafS16SC0lQYkt2kYjW6ubCvL6KIpM2w9Zxu19l8h/0HHaJ1kIY6prhzlG5D1rGUhNKnsYz9ij7C71OT3K2LXAIf1vteUpVI0gop9i9vkESN2UVxHHCR291uawqMyu3eoWqDTspu2joMIeu0MCH3AzJVSx0ESqdvO4wjOkZLA5nzKGybIPuKjYfBgB"
+     },
+     {
+      "type": "text",
+      "text": "Seven nodes written into `wiki/concepts/` — the first graph here, under `graph: pwa-pricing`.\n\n**Where the graph stands**\n\n- **Treatment** `pwa_conversion_rate_flip`, fully determined by two pre-treatment facts: `booking_in_flip_window` and `departure_year_within_2026`. Assignment is a **deterministic rule**, not randomisation — and confirmed as such.\n- **Outcome** is now `member_booking_volume` (all member bookings), with `avios_redeeming_bookings` as a subset beneath it. The split between them is `## Computed from` — arithmetic — so a shift in redemption mix is explicitly *not* a finding about volume. That guard is now in the wiki.\n- **Main threat** is `booking_departure_lead_time`: it sits upstream of both the assignment variable and the outcome, and it encodes your \"different kind of trip\". This is a parallel-trends problem, not a classic confounder — nothing about lead time caused the policy.\n- **`seasonal_holiday_demand`** is marked `observed: false` as a *proposal*, needing a source. It only breaks the design if it moved 2026 and 2027 departures **differently** in that fortnight; if it moved them together, DiD absorbs it.\n- Shape of the answer: difference-in-differences across the departure-year boundary, on total member bookings, with the redeeming/non-redeeming split as the substitution check — and the Aug-2025 route explicitly ruled out as already-known-biased.\n\n**What remains:** one event sweep, then it's testable. Anticipation effects I can test in the notebook rather than ask about.\n\n**Checkpoint — my recommendation: one more question, then proceed.** The gap I can't close by reading is what else was going on in that fortnight.\n\n---\n\n**QUESTION FOR THE ANALYST:**\n\n> Other than the flip itself, did anything else change between roughly July and September 2026 that could move BA Holidays member bookings — and did it hit 2026 and 2027 departures differently?\n\n**Options:**\n1. **Nothing else that I know of** — the flip was the only change in that period.\n2. **Yes — marketing or promotional activity** ran alongside it (campaign, sale, comms push).\n3. **Yes — a pricing, inventory or product change** on BA Holidays itself (ticket prices, route availability, site changes).\n4. **I don't know — nobody has checked.** *(Then I'll write it as an open risk on the record and the notebook will test for it.)*"
+     }
+    ]
    }
   ]
  },
@@ -931,7 +1260,15 @@
    "wiki/experiments/2026-08-conversion-rate-flip.md",
    "wiki/questions/q-0001/q-0001.md",
    ".claude/SKILLS.md",
-   "raw/pwa_exp"
+   "raw/pwa_exp",
+   "wiki/concepts/pwa_conversion_rate_flip.md",
+   "wiki/concepts/departure_year_within_2026.md",
+   "wiki/concepts/member_booking_volume.md",
+   "wiki/concepts/avios_redeeming_bookings.md",
+   "wiki/concepts/booking_departure_lead_time.md",
+   "wiki/concepts/seasonal_holiday_demand.md",
+   "wiki/concepts/booking_in_flip_window.md",
+   "wiki/concepts/avios_balance.md"
   ],
   "main": [
    "wiki/README.md",
@@ -1564,37 +1901,359 @@
      "multiSelect": false
     }
    ]
+  },
+  {
+   "t": "2026-09-07T17:42:07.796Z",
+   "kind": "user",
+   "agent": "analyst",
+   "text": "The analyst answered:\n\nQ: During those two weeks, how plausible is it that a member **moved their departure date into 2026** — or brought a trip forward — to get the better conversion rate?\nA: Unlikely"
+  },
+  {
+   "t": "2026-09-07T17:42:12.066Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "invoke_subagent",
+   "input": {
+    "agent": "interviewer",
+    "resume": true,
+    "task": "The analyst answered:\n\nQ: During those two weeks, how plausible is it that a member moved their departure date into 2026 — or brought a trip forward — to get the better conversion rate?\nA: \"Unlikely\" — by August, people booking 2027 departures are a different kind of trip (long-haul, planned, school holidays) with almost no overlap with near-term 2026 bookings.\n\nContinue. Also, in your next turn please state briefly where you think the graph stands and what remains — I owe the analyst a budget checkpoint alongside relaying your next question. One question per turn, 2-4 concrete options."
+   }
+  },
+  {
+   "t": "2026-09-07T17:42:12.066Z",
+   "kind": "agent_start",
+   "agent": "interviewer",
+   "task": "The analyst answered:\n\nQ: During those two weeks, how plausible is it that a member moved their departure date into 2026 — or brought a trip forward — to get the better conversion rate?\nA: \"Unlikely\" — by August, people booking 2027 departures are a different kind of trip (long-haul, planned, school holidays) with almost no overlap with near-term 2026 bookings.\n\nContinue. Also, in your next turn please state briefly where you think the graph stands and what remains — I owe the analyst a budget checkpoint alongside relaying your next question. One question per turn, 2-4 concrete options.",
+   "status": "resumed"
+  },
+  {
+   "t": "2026-09-07T17:42:18.925Z",
+   "kind": "tool",
+   "agent": "interviewer",
+   "name": "load_skill",
+   "input": {
+    "name": "drawing-the-dag"
+   }
+  },
+  {
+   "t": "2026-09-07T17:42:49.273Z",
+   "kind": "text",
+   "agent": "interviewer",
+   "text": "The answer helps and hurts, and it's worth being explicit about both halves: no pull-forward means the 2027+ group stays genuinely untreated (good — the comparison survives). But \"almost no overlap, a different kind of trip\" is precisely the **parallel-trends** problem: a control group that differs structurally from the treated one. That trade-off is now the centre of the design.\n\nLet me draw what we have. This is the first graph in `wiki/concepts/`."
+  },
+  {
+   "t": "2026-09-07T17:42:49.273Z",
+   "kind": "tool",
+   "agent": "interviewer",
+   "name": "write_file",
+   "input": {
+    "file_path": "wiki/concepts/pwa_conversion_rate_flip.md",
+    "content": "---\nid: pwa_conversion_rate_flip\nlabel: PWA conversion-rate flip (treatment)\nobserved: true\nmeasured_at: treatment\ngraphs: [pwa-pricing]\ntags: [dag]\nsource: raw/pwa_exp; interview/2026-09-07\nconfirmed_by: analyst\nconfirmed_on: 2026-09-07\n---\n\nBinary policy exposure at the level of a **booking**. During 1–14 August 2026 the mapping\nbetween discount tier and Avios-to-cash conversion rate was inverted: the maximum discount\ntier carried the *most* favourable rate (0.01) instead of the least (0.004). Event page:\n[[2026-08-conversion-rate-flip-experiment]].\n\nA booking is exposed if and only if it was made in the window **and** has a departure date\nwithin 2026. There was no member-level or route-level split.\n\n**Data mode is `simulated` for q-0001.** `observed: true` here is a design choice for the\nsimulation, not a verified fact about the warehouse. {q:q-0001 on:2026-09-07}\n\n## Caused by\n- [[departure_year_within_2026]] — the departure-date boundary is the entire assignment\n  rule; nothing else determined exposure. {by:analyst on:2026-09-07}\n- [[booking_in_flip_window]] — exposure also requires the booking to fall in 1–14 Aug 2026.\n  {by:analyst on:2026-09-07}\n\n## Causes\n- [[avios_redeeming_bookings]] — a richer rate at the top of the ladder makes redeeming\n  more attractive, so more member bookings are expected to involve a redemption. This is\n  the business's stated rationale; proposed, not yet confirmed.\n- [[member_booking_volume]] — the investment case was that better redemption terms would\n  *create* bookings, not just change how existing ones are paid for. This edge is the\n  whole question. Proposed, not yet confirmed.\n\n## Questions that turned on this\n- [[q-0001]] — how to estimate the effect of the flip on booking volume.\n"
+   }
+  },
+  {
+   "t": "2026-09-07T17:42:50.067Z",
+   "kind": "commit",
+   "agent": "interviewer",
+   "path": "wiki/concepts/pwa_conversion_rate_flip.md",
+   "commit": "fa03bcc74ec36007752ce0943941c11ba56c3838",
+   "url": "https://github.com/Guidosalimbeni/cb_wiki_storage/commit/fa03bcc74ec36007752ce0943941c11ba56c3838",
+   "text": "create wiki/concepts/pwa_conversion_rate_flip.md"
+  },
+  {
+   "t": "2026-09-07T17:42:50.067Z",
+   "kind": "tool",
+   "agent": "interviewer",
+   "name": "write_file",
+   "input": {
+    "file_path": "wiki/concepts/departure_year_within_2026.md",
+    "content": "---\nid: departure_year_within_2026\nlabel: Departure date falls within 2026\nobserved: true\nmeasured_at: pre_treatment\ngraphs: [pwa-pricing]\ntags: [dag]\nsource: raw/pwa_exp; interview/2026-09-07\nconfirmed_by: analyst\nconfirmed_on: 2026-09-07\n---\n\nWhether the booking's **departure date** is inside 2026 (treated) or 2027 or later\n(untreated). Fixed at the moment of booking, so it is measured before treatment applies.\n\nThis is the **assignment mechanism**. It is not randomised, and it is the only boundary\nthat exists in the data.\n\nThe analyst confirmed there is no meaningful **pull-forward**: members did not move\ndeparture dates into 2026 to chase the better rate, because by August a 2027 departure is\na different kind of trip (long-haul, planned, school holidays) with almost no overlap with\nnear-term 2026 bookings. {by:analyst on:2026-09-07}\n\nThat confirmation does two opposite things, and both matter:\n\n- **Good:** no edge runs from [[pwa_conversion_rate_flip]] back into this node, so the\n  2027+ group is genuinely untreated and is not depleted by the treatment.\n- **Bad:** \"a different kind of trip\" is the parallel-trends threat. The two groups differ\n  systematically, so their booking volumes need not move together in the absence of the\n  flip. See [[booking_departure_lead_time]].\n\n## Causes\n- [[pwa_conversion_rate_flip]] — determines exposure. {by:analyst on:2026-09-07}\n- [[booking_departure_lead_time]] — arithmetically and behaviourally, a 2027 departure\n  booked in August 2026 is a long-lead trip. {by:analyst on:2026-09-07}\n\n## Questions that turned on this\n- [[q-0001]]\n"
+   }
+  },
+  {
+   "t": "2026-09-07T17:42:50.815Z",
+   "kind": "commit",
+   "agent": "interviewer",
+   "path": "wiki/concepts/departure_year_within_2026.md",
+   "commit": "8586a3fb695f93c353f1550011849319edf62e68",
+   "url": "https://github.com/Guidosalimbeni/cb_wiki_storage/commit/8586a3fb695f93c353f1550011849319edf62e68",
+   "text": "create wiki/concepts/departure_year_within_2026.md"
+  },
+  {
+   "t": "2026-09-07T17:43:05.304Z",
+   "kind": "tool",
+   "agent": "interviewer",
+   "name": "write_file",
+   "input": {
+    "file_path": "wiki/concepts/member_booking_volume.md",
+    "content": "---\nid: member_booking_volume\nlabel: Member booking volume (all logged-in member BA Holidays bookings)\nobserved: true\nmeasured_at: post_treatment\ngraphs: [pwa-pricing]\ntags: [dag]\nsource: interview/2026-09-07\nconfirmed_by: analyst\nconfirmed_on: 2026-09-07\n---\n\nCount of BA Holidays bookings made by logged-in members, **whether or not Avios were\nredeemed**, at the grain of booking-date × departure-year-group.\n\nThe analyst confirmed in interview that all member bookings are visible, redeeming or not.\nAn earlier reading of `raw/pwa_exp` had this wrong. {by:analyst on:2026-09-07}\n\n**This is the outcome q-0001 actually wants.** [[avios_redeeming_bookings]] is a subset of\nit, and using the subset alone cannot tell an increase in bookings apart from members\nswitching into redeeming on bookings they would have made anyway.\n\nNot observed, and deliberately not a node here: *non-member* BA Holidays bookings. Total\nBA Holidays booking volume is therefore not an available outcome, and non-members are not\navailable as a control group. See [[pay-with-avios-ba-holidays]].\n\n## Caused by\n- [[pwa_conversion_rate_flip]] — the investment case. Proposed, not yet confirmed.\n- [[seasonal_holiday_demand]] — August demand patterns move bookings regardless of policy.\n  Proposed.\n- [[booking_departure_lead_time]] — long-lead and near-term trips are booked at different\n  rates through the year. Proposed.\n\n## Computed from\n- [[avios_redeeming_bookings]] plus non-redeeming member bookings. **Arithmetic, not\n  cause.** A shift in the split between the two is a mix change and is not by itself\n  evidence of incremental volume.\n\n## Questions that turned on this\n- [[q-0001]]\n"
+   }
+  },
+  {
+   "t": "2026-09-07T17:43:06.076Z",
+   "kind": "commit",
+   "agent": "interviewer",
+   "path": "wiki/concepts/member_booking_volume.md",
+   "commit": "31a7e37413eb5f54b896dbc938f77a55eb24545d",
+   "url": "https://github.com/Guidosalimbeni/cb_wiki_storage/commit/31a7e37413eb5f54b896dbc938f77a55eb24545d",
+   "text": "create wiki/concepts/member_booking_volume.md"
+  },
+  {
+   "t": "2026-09-07T17:43:06.076Z",
+   "kind": "tool",
+   "agent": "interviewer",
+   "name": "write_file",
+   "input": {
+    "file_path": "wiki/concepts/avios_redeeming_bookings.md",
+    "content": "---\nid: avios_redeeming_bookings\nlabel: Member bookings that redeemed Avios\nobserved: true\nmeasured_at: post_treatment\ngraphs: [pwa-pricing]\ntags: [dag]\nsource: raw/pwa_exp; interview/2026-09-07\nconfirmed_by: analyst\nconfirmed_on: 2026-09-07\n---\n\nCount of member bookings on which Avios were redeemed. A **strict subset** of\n[[member_booking_volume]].\n\nThis is the metric the business calls \"bookings made using the product\". It is the one\nmost likely to move under the flip, and the one most likely to make the experiment look\nsuccessful without any incremental holiday being sold — because a better rate gives\nmembers who were booking anyway a reason to pay with Avios.\n\n## Caused by\n- [[pwa_conversion_rate_flip]] — a better rate at the top of the ladder makes redeeming\n  more attractive. Proposed, not yet confirmed.\n- [[member_booking_volume]] — more bookings mechanically give more opportunities to\n  redeem. Proposed.\n- [[avios_balance]] — a member cannot redeem what they do not hold. Proposed.\n\n## Questions that turned on this\n- [[q-0001]]\n"
+   }
+  },
+  {
+   "t": "2026-09-07T17:43:06.809Z",
+   "kind": "commit",
+   "agent": "interviewer",
+   "path": "wiki/concepts/avios_redeeming_bookings.md",
+   "commit": "5a113ceef17af0d9f70d60cff7738f363a718924",
+   "url": "https://github.com/Guidosalimbeni/cb_wiki_storage/commit/5a113ceef17af0d9f70d60cff7738f363a718924",
+   "text": "create wiki/concepts/avios_redeeming_bookings.md"
+  },
+  {
+   "t": "2026-09-07T17:43:21.015Z",
+   "kind": "tool",
+   "agent": "interviewer",
+   "name": "write_file",
+   "input": {
+    "file_path": "wiki/concepts/booking_departure_lead_time.md",
+    "content": "---\nid: booking_departure_lead_time\nlabel: Lead time between booking date and departure date\nobserved: true\nmeasured_at: pre_treatment\ngraphs: [pwa-pricing]\ntags: [dag]\nsource: interview/2026-09-07\nconfirmed_by: analyst\nconfirmed_on: 2026-09-07\n---\n\nDays between when the booking was made and when the trip departs.\n\nThis node exists because of one thing the analyst said: bookings departing in 2027+ are\n\"a different kind of trip — long-haul, planned, school holidays\". Lead time is the\nvariable that difference runs through, and it sits **upstream of both the assignment\nvariable and the outcome**, which makes it the main threat to the departure-date\ncomparison.\n\nIt is not a confounder in the classic sense — nothing about lead time caused the *policy*\nto be flipped. But it makes the treated and untreated groups structurally different, so\ntheir booking volumes need not trend together. That is the parallel-trends assumption, and\nit is the assumption the design will live or die on.\n\n## Caused by\n- [[departure_year_within_2026]] — a 2027 departure booked in Aug 2026 is by construction\n  a long-lead booking. {by:analyst on:2026-09-07}\n\n## Causes\n- [[member_booking_volume]] — long-lead and near-term trips fill up on different seasonal\n  rhythms. Proposed.\n- [[avios_balance]] — plausibly, members planning far ahead have accumulated differently.\n  Proposed, weak.\n\n## Questions that turned on this\n- [[q-0001]]\n"
+   }
+  },
+  {
+   "t": "2026-09-07T17:43:21.722Z",
+   "kind": "commit",
+   "agent": "interviewer",
+   "path": "wiki/concepts/booking_departure_lead_time.md",
+   "commit": "5d3e2127da81b12a99943e741ff37b4e4552ac08",
+   "url": "https://github.com/Guidosalimbeni/cb_wiki_storage/commit/5d3e2127da81b12a99943e741ff37b4e4552ac08",
+   "text": "create wiki/concepts/booking_departure_lead_time.md"
+  },
+  {
+   "t": "2026-09-07T17:43:21.723Z",
+   "kind": "tool",
+   "agent": "interviewer",
+   "name": "write_file",
+   "input": {
+    "file_path": "wiki/concepts/seasonal_holiday_demand.md",
+    "content": "---\nid: seasonal_holiday_demand\nlabel: Seasonal holiday demand\nobserved: false\nmeasured_at: concurrent\ngraphs: [pwa-pricing]\ntags: [dag]\nsource: interview/2026-09-07\nconfirmed_by: null\nconfirmed_on: null\n---\n\nUnderlying demand for holidays in the calendar period — school terms, pay cycles, weather,\ncompetitor pricing, macro conditions. Not measured directly anywhere in our data.\n\nMarked `observed: false` as a **proposal**, not yet an established claim: no source has\nconfirmed that IAGL holds no demand index. If one exists it should be recorded here,\nbecause an unobserved common driver that hits 2026 and 2027 departures *differently* is\nwhat breaks the parallel-trends assumption behind the departure-date comparison.\n\nIt only threatens the design if it moves the two departure-year groups differently during\n1–14 Aug 2026. If it moves them together, the difference-in-differences absorbs it.\n\n## Causes\n- [[member_booking_volume]] — proposed.\n- [[avios_redeeming_bookings]] — proposed, via booking volume.\n\n## Questions that turned on this\n- [[q-0001]]\n"
+   }
+  },
+  {
+   "t": "2026-09-07T17:43:22.748Z",
+   "kind": "commit",
+   "agent": "interviewer",
+   "path": "wiki/concepts/seasonal_holiday_demand.md",
+   "commit": "22e513b858951e840d31d2d3e1ae73a44e70ae97",
+   "url": "https://github.com/Guidosalimbeni/cb_wiki_storage/commit/22e513b858951e840d31d2d3e1ae73a44e70ae97",
+   "text": "create wiki/concepts/seasonal_holiday_demand.md"
+  },
+  {
+   "t": "2026-09-07T17:43:32.480Z",
+   "kind": "tool",
+   "agent": "interviewer",
+   "name": "write_file",
+   "input": {
+    "file_path": "wiki/concepts/booking_in_flip_window.md",
+    "content": "---\nid: booking_in_flip_window\nlabel: Booking made during 1–14 August 2026\nobserved: true\nmeasured_at: pre_treatment\ngraphs: [pwa-pricing]\ntags: [dag]\nsource: raw/pwa_exp\nconfirmed_by: analyst\nconfirmed_on: 2026-09-07\n---\n\nWhether the booking date falls inside the two-week flip window. Together with\n[[departure_year_within_2026]] it fully determines [[pwa_conversion_rate_flip]].\n\nOpen point: the source does not say whether the flip was **announced** to members. If it\nwas, bookings could have been delayed into the window or rushed before it ended, which\nwould show as a dip immediately before 1 August and a spike immediately after 14 August.\nThat is testable in the notebook without asking anyone.\n\n## Causes\n- [[pwa_conversion_rate_flip]] {by:analyst on:2026-09-07}\n\n## Questions that turned on this\n- [[q-0001]]\n"
+   }
+  },
+  {
+   "t": "2026-09-07T17:43:33.138Z",
+   "kind": "commit",
+   "agent": "interviewer",
+   "path": "wiki/concepts/booking_in_flip_window.md",
+   "commit": "674354dc6e92290a3d4381750cad5cfac5a8a47d",
+   "url": "https://github.com/Guidosalimbeni/cb_wiki_storage/commit/674354dc6e92290a3d4381750cad5cfac5a8a47d",
+   "text": "create wiki/concepts/booking_in_flip_window.md"
+  },
+  {
+   "t": "2026-09-07T17:43:33.138Z",
+   "kind": "tool",
+   "agent": "interviewer",
+   "name": "write_file",
+   "input": {
+    "file_path": "wiki/concepts/avios_balance.md",
+    "content": "---\nid: avios_balance\nlabel: Member's Avios balance at time of booking\nobserved: true\nmeasured_at: pre_treatment\ngraphs: [pwa-pricing]\ntags: [dag]\nsource: interview/2026-09-07\nconfirmed_by: null\nconfirmed_on: null\n---\n\nHow many Avios the member holds when booking. A member cannot redeem what they do not\nhold, so this gates whether the flip could affect them at all — and it is a natural\nsubgroup for a heterogeneous-effect check.\n\n`observed: true` is assumed from the fact that IAGL runs the currency; **not yet confirmed\nby the analyst**, and under q-0001 the data is simulated in any case.\n\n## Causes\n- [[avios_redeeming_bookings]] — proposed.\n\n## Caused by\n- [[booking_departure_lead_time]] — proposed, weak.\n\n## Questions that turned on this\n- [[q-0001]]\n"
+   }
+  },
+  {
+   "t": "2026-09-07T17:43:34.260Z",
+   "kind": "commit",
+   "agent": "interviewer",
+   "path": "wiki/concepts/avios_balance.md",
+   "commit": "5aaab735f427cb57e74e1828d22220f440627ad7",
+   "url": "https://github.com/Guidosalimbeni/cb_wiki_storage/commit/5aaab735f427cb57e74e1828d22220f440627ad7",
+   "text": "create wiki/concepts/avios_balance.md"
+  },
+  {
+   "t": "2026-09-07T17:43:51.660Z",
+   "kind": "text",
+   "agent": "interviewer",
+   "text": "Seven nodes written into `wiki/concepts/` — the first graph here, under `graph: pwa-pricing`.\n\n**Where the graph stands**\n\n- **Treatment** `pwa_conversion_rate_flip`, fully determined by two pre-treatment facts: `booking_in_flip_window` and `departure_year_within_2026`. Assignment is a **deterministic rule**, not randomisation — and confirmed as such.\n- **Outcome** is now `member_booking_volume` (all member bookings), with `avios_redeeming_bookings` as a subset beneath it. The split between them is `## Computed from` — arithmetic — so a shift in redemption mix is explicitly *not* a finding about volume. That guard is now in the wiki.\n- **Main threat** is `booking_departure_lead_time`: it sits upstream of both the assignment variable and the outcome, and it encodes your \"different kind of trip\". This is a parallel-trends problem, not a classic confounder — nothing about lead time caused the policy.\n- **`seasonal_holiday_demand`** is marked `observed: false` as a *proposal*, needing a source. It only breaks the design if it moved 2026 and 2027 departures **differently** in that fortnight; if it moved them together, DiD absorbs it.\n- Shape of the answer: difference-in-differences across the departure-year boundary, on total member bookings, with the redeeming/non-redeeming split as the substitution check — and the Aug-2025 route explicitly ruled out as already-known-biased.\n\n**What remains:** one event sweep, then it's testable. Anticipation effects I can test in the notebook rather than ask about.\n\n**Checkpoint — my recommendation: one more question, then proceed.** The gap I can't close by reading is what else was going on in that fortnight.\n\n---\n\n**QUESTION FOR THE ANALYST:**\n\n> Other than the flip itself, did anything else change between roughly July and September 2026 that could move BA Holidays member bookings — and did it hit 2026 and 2027 departures differently?\n\n**Options:**\n1. **Nothing else that I know of** — the flip was the only change in that period.\n2. **Yes — marketing or promotional activity** ran alongside it (campaign, sale, comms push).\n3. **Yes — a pricing, inventory or product change** on BA Holidays itself (ticket prices, route availability, site changes).\n4. **I don't know — nobody has checked.** *(Then I'll write it as an open risk on the record and the notebook will test for it.)*"
+  },
+  {
+   "t": "2026-09-07T17:43:51.660Z",
+   "kind": "agent_end",
+   "agent": "interviewer",
+   "status": "done",
+   "text": "Seven nodes written into `wiki/concepts/` — the first graph here, under `graph: pwa-pricing`.\n\n**Where the graph stands**\n\n- **Treatment** `pwa_conversion_rate_flip`, fully determined by two pre-treatment facts: `booking_in_flip_window` and `departure_year_within_2026`. Assignment is a **deterministic rule**, not randomisation — and confirmed as such.\n- **Outcome** is now `member_booking_volume` (all member bookings), with `avios_redeeming_bookings` as a subset beneath it. The split between them is `## Computed from` — arithmetic — so a shift in redemption mix is explicitly *not* a finding about volume. That guard is now in the wiki.\n- **Main threat** is `booking_departure_lead_time`: it sits upstream of both the assignment variable and the outcome, and it encodes your \"different kind of trip\". This is a parallel-trends problem, not a classic confounder — nothing about lead time caused the policy.\n- **`seasonal_holiday_demand`** is marked `observed: false` as a *proposal*, needing a source. It only breaks the design if it moved 2026 and 2027 departures **differently** in that fortnight; if it moved them together, DiD absorbs it.\n- Shape of the answer: difference-in-differences across the departure-year boundary, on total member bookings, with the redeeming/non-redeeming split as the substitution check — and the Aug-2025 route explicitly ruled out as already-known-biased.\n\n**What remains:** one event sweep, then it's testable. Anticipation effects I can test in the notebook rather than ask about.\n\n**Checkpoint — my recommendation: one more question, then proceed.** The gap I can't close by reading is what else was going on in that fortnight.\n\n---\n\n**QUESTION FOR THE ANALYST:**\n\n> Other than the flip itself, did anything else change between roughly July and September 2026 that could move BA Holidays member bookings — and did it hit 2026 and 2027 departures differently?\n\n**Options:**\n1. **Nothing else that I know of** — the flip was the only change in that period.\n2. **Yes — marketing or promotional activity** ran alongside it (campaign, sale, comms push).\n3. **Yes — a pricing, inventory or product change** on BA Holidays itself (ticket prices, route availability, site changes).\n4. **I don't know — nobody has checked.** *(Then I'll write it as an open risk on the record and the notebook will test for it.)*"
+  },
+  {
+   "t": "2026-09-07T17:43:57.978Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "ask_analyst",
+   "input": {
+    "questions": [
+     {
+      "header": "Other changes",
+      "question": "Other than the flip itself, did anything else change between roughly July and September 2026 that could move BA Holidays member bookings — and did it hit 2026 and 2027 departures differently?",
+      "options": [
+       {
+        "label": "Nothing else I know of",
+        "description": "The flip was the only change in that period."
+       },
+       {
+        "label": "Marketing / promo activity",
+        "description": "Yes — a campaign, sale or comms push ran alongside it."
+       },
+       {
+        "label": "Pricing/product change",
+        "description": "Yes — a pricing, inventory or product change on BA Holidays itself (ticket prices, route availability, site changes)."
+       },
+       {
+        "label": "Nobody has checked",
+        "description": "I don't know. Write it as an open risk on the record and let the notebook test for it."
+       }
+      ]
+     },
+     {
+      "header": "Checkpoint",
+      "question": "Interview budget checkpoint — the interviewer recommends proceeding after this answer. What would you like?",
+      "options": [
+       {
+        "label": "Proceed (recommended)",
+        "description": "Stop interviewing after this answer, get the reviewer's verdict and the DAG notebook written."
+       },
+       {
+        "label": "Keep going",
+        "description": "A few more interview questions to tighten the graph before anything is built."
+       },
+       {
+        "label": "Park it",
+        "description": "Stop here; leave the question open with what we have."
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "t": "2026-09-07T17:43:57.978Z",
+   "kind": "ask",
+   "agent": "main",
+   "questions": [
+    {
+     "question": "Other than the flip itself, did anything else change between roughly July and September 2026 that could move BA Holidays member bookings — and did it hit 2026 and 2027 departures differently?",
+     "header": "Other change",
+     "options": [
+      {
+       "label": "Nothing else I know of",
+       "description": "The flip was the only change in that period."
+      },
+      {
+       "label": "Marketing / promo activity",
+       "description": "Yes — a campaign, sale or comms push ran alongside it."
+      },
+      {
+       "label": "Pricing/product change",
+       "description": "Yes — a pricing, inventory or product change on BA Holidays itself (ticket prices, route availability, site changes)."
+      },
+      {
+       "label": "Nobody has checked",
+       "description": "I don't know. Write it as an open risk on the record and let the notebook test for it."
+      }
+     ],
+     "multiSelect": false
+    },
+    {
+     "question": "Interview budget checkpoint — the interviewer recommends proceeding after this answer. What would you like?",
+     "header": "Checkpoint",
+     "options": [
+      {
+       "label": "Proceed (recommended)",
+       "description": "Stop interviewing after this answer, get the reviewer's verdict and the DAG notebook written."
+      },
+      {
+       "label": "Keep going",
+       "description": "A few more interview questions to tighten the graph before anything is built."
+      },
+      {
+       "label": "Park it",
+       "description": "Stop here; leave the question open with what we have."
+      }
+     ],
+     "multiSelect": false
+    }
+   ]
   }
  ],
- "commits": 5,
+ "commits": 13,
  "usage": {
-  "input": 287576,
-  "output": 9577,
-  "cacheRead": 229172
+  "input": 460062,
+  "output": 17264,
+  "cacheRead": 318158
  },
  "pending": {
-  "toolUseId": "toolu_01SkqserTRBv3hKvBzVPwXsQ",
+  "toolUseId": "toolu_012tL6itRfmfvXjdxwqX8gJr",
   "toolName": "ask_analyst",
   "payload": [
    {
-    "question": "During those two weeks, how plausible is it that a member **moved their departure date into 2026** — or brought a trip forward — to get the better conversion rate?",
-    "header": "Date shiftin",
+    "question": "Other than the flip itself, did anything else change between roughly July and September 2026 that could move BA Holidays member bookings — and did it hit 2026 and 2027 departures differently?",
+    "header": "Other change",
     "options": [
      {
-      "label": "Very plausible",
-      "description": "Members are flexible on dates and the rate difference was large and visible at the point of choosing. Pull-forward is a real risk."
+      "label": "Nothing else I know of",
+      "description": "The flip was the only change in that period."
      },
      {
-      "label": "Unlikely",
-      "description": "By August, people booking 2027 departures are a different kind of trip (long-haul, planned, school holidays) with almost no overlap with near-term 2026 bookings."
+      "label": "Marketing / promo activity",
+      "description": "Yes — a campaign, sale or comms push ran alongside it."
      },
      {
-      "label": "Possible but small",
-      "description": "Some flexibility exists, but the rate isn't shown prominently enough at date-selection for most members to react."
+      "label": "Pricing/product change",
+      "description": "Yes — a pricing, inventory or product change on BA Holidays itself (ticket prices, route availability, site changes)."
      },
      {
-      "label": "Not sure, but no announcement",
-      "description": "Members were never told the flip was happening, so they couldn't have deliberately gamed it."
+      "label": "Nobody has checked",
+      "description": "I don't know. Write it as an open risk on the record and let the notebook test for it."
+     }
+    ],
+    "multiSelect": false
+   },
+   {
+    "question": "Interview budget checkpoint — the interviewer recommends proceeding after this answer. What would you like?",
+    "header": "Checkpoint",
+    "options": [
+     {
+      "label": "Proceed (recommended)",
+      "description": "Stop interviewing after this answer, get the reviewer's verdict and the DAG notebook written."
+     },
+     {
+      "label": "Keep going",
+      "description": "A few more interview questions to tighten the graph before anything is built."
+     },
+     {
+      "label": "Park it",
+      "description": "Stop here; leave the question open with what we have."
      }
     ],
     "multiSelect": false
@@ -1603,24 +2262,43 @@
   "partialResults": [],
   "questions": [
    {
-    "question": "During those two weeks, how plausible is it that a member **moved their departure date into 2026** — or brought a trip forward — to get the better conversion rate?",
-    "header": "Date shiftin",
+    "question": "Other than the flip itself, did anything else change between roughly July and September 2026 that could move BA Holidays member bookings — and did it hit 2026 and 2027 departures differently?",
+    "header": "Other change",
     "options": [
      {
-      "label": "Very plausible",
-      "description": "Members are flexible on dates and the rate difference was large and visible at the point of choosing. Pull-forward is a real risk."
+      "label": "Nothing else I know of",
+      "description": "The flip was the only change in that period."
      },
      {
-      "label": "Unlikely",
-      "description": "By August, people booking 2027 departures are a different kind of trip (long-haul, planned, school holidays) with almost no overlap with near-term 2026 bookings."
+      "label": "Marketing / promo activity",
+      "description": "Yes — a campaign, sale or comms push ran alongside it."
      },
      {
-      "label": "Possible but small",
-      "description": "Some flexibility exists, but the rate isn't shown prominently enough at date-selection for most members to react."
+      "label": "Pricing/product change",
+      "description": "Yes — a pricing, inventory or product change on BA Holidays itself (ticket prices, route availability, site changes)."
      },
      {
-      "label": "Not sure, but no announcement",
-      "description": "Members were never told the flip was happening, so they couldn't have deliberately gamed it."
+      "label": "Nobody has checked",
+      "description": "I don't know. Write it as an open risk on the record and let the notebook test for it."
+     }
+    ],
+    "multiSelect": false
+   },
+   {
+    "question": "Interview budget checkpoint — the interviewer recommends proceeding after this answer. What would you like?",
+    "header": "Checkpoint",
+    "options": [
+     {
+      "label": "Proceed (recommended)",
+      "description": "Stop interviewing after this answer, get the reviewer's verdict and the DAG notebook written."
+     },
+     {
+      "label": "Keep going",
+      "description": "A few more interview questions to tighten the graph before anything is built."
+     },
+     {
+      "label": "Park it",
+      "description": "Stop here; leave the question open with what we have."
      }
     ],
     "multiSelect": false
