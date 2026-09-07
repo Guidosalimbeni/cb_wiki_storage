@@ -8,6 +8,6 @@ before assuming a question is new, and before filing an outcome that arrived wee
 
 A stale index is worse than no index, because people trust it. `/cb_status` repairs it.
 
-| id | what was asked | also called | state | outcome |
-|---|---|---|---|---|
-| q-0001 | In relation to iagl_pwa inverse curve pricing treatment, how can I estimate the impact on bookings volume? | inverse curve pricing, PWA conversion flip | interviewing | — |
+| id  | what was asked | also called | state | outcome |
+| --- | -------------- | ----------- | ----- | ------- |
+|     |                |             |       |         |
