@@ -5,9 +5,10 @@ date_end: 2026-08-14        # "first 2 weeks of August 2026"
 announced_on: null          # not stated in source — unknown, flagged below
 touches: [pwa_discount_tier_conversion_rate, avios_redeemed, cash, bookings]
 visible_in_data: partial    # policy is visible; a clean control group is not
-source: raw/iagl_pwa
+source: raw/pwa_exp   # same text previously ingested under the path raw/iagl_pwa
 recorded_by: analyst
 recorded_on: 2026-09-06
+reingested_on: 2026-09-07
 ---
 
 ## What changed
