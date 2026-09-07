@@ -42,13 +42,25 @@ Defined on the source's own words; see [[iagl-pwa-metrics]] for the formulas.
 
 **This is the central data limitation of the product.**
 
-- Visible: all *logged-in member* activity — searches and bookings.
-- **Not visible: BA Holidays booking volume independent of Avios use.** Non-member
-  bookings are hidden from IAGL. {source: raw/pwa_exp}
+- Visible: all *logged-in member* activity — searches and **all member bookings, whether
+  or not Avios were redeemed**. Avios-redeeming bookings are a strict subset of visible
+  member bookings. Confirmed by the analyst in interview. {q:q-0001 on:2026-09-07}
+- **Not visible: non-member BA Holidays bookings.** These are hidden from IAGL.
+  {source: raw/pwa_exp}
 
-So the denominator "all BA Holidays bookings" does not exist in our data. Any metric
-phrased as a *share* of total BA Holidays bookings is not computable as stated, and any
-design that needs untreated non-member bookings as a control group is unavailable.
+Correction: an earlier reading of `raw/pwa_exp` implied that only Avios-redeeming
+bookings were countable. That was wrong. The invisible group is **non-members**, not
+non-redeemers. {q:q-0001 on:2026-09-07}
+
+Consequences:
+
+- The denominator "all BA Holidays bookings" still does not exist in our data, so any
+  metric phrased as a share of *total* BA Holidays bookings is not computable as stated,
+  and non-member bookings are unavailable as a control group.
+- But **member booking volume is an observable outcome**, and it can be decomposed into
+  redeeming and non-redeeming bookings. This is what lets a genuine increase in bookings
+  be told apart from members merely switching into redeeming on bookings they would have
+  made anyway. That distinction is the crux of q-0001.
 
 ## Causal claims made in the source (attributed, not edges)
 
