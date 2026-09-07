@@ -10,4 +10,4 @@ A stale index is worse than no index, because people trust it. `/cb_status` repa
 
 | id  | what was asked | also called | state | outcome |
 | --- | -------------- | ----------- | ----- | ------- |
-|     |                |             |       |         |
+| q-0001 | How to estimate the booking-volume impact of the Aug 2026 PWA price/conversion-rate change, with no randomisation | "the PWA price change", "the August conversion rate flip", "the Avios discount ladder flip" | interviewing | — |
