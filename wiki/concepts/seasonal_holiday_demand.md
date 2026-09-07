@@ -21,6 +21,12 @@ what breaks the parallel-trends assumption behind the departure-date comparison.
 It only threatens the design if it moves the two departure-year groups differently during
 1–14 Aug 2026. If it moves them together, the difference-in-differences absorbs it.
 
+The analyst confirmed that, as far as they know, **nothing else changed** between July and
+September 2026 that could move BA Holidays member bookings — no campaign, no BA Holidays
+pricing or product change. This is an absence-of-evidence statement from one person, not a
+verified audit, so it is recorded as a stated belief and the notebook should still test for
+unexplained level shifts outside the window. {by:analyst on:2026-09-07}
+
 ## Causes
 - [[member_booking_volume]] — proposed.
 - [[avios_redeeming_bookings]] — proposed, via booking volume.
