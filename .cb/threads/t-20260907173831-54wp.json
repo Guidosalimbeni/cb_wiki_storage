@@ -2,7 +2,7 @@
  "id": "t-20260907173831-54wp",
  "title": "q-0001 · in relation to the change in price configuration for pwa in august 2026, no random experiments were conducted, h",
  "created": "2026-09-07T17:38:31.234Z",
- "updated": "2026-09-07T17:40:50.963Z",
+ "updated": "2026-09-07T17:41:48.888Z",
  "awaiting": "answer",
  "main": [
   {
@@ -451,6 +451,83 @@
      }
     }
    ]
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_01KDAMYsTVVLSP57T8mvafxB",
+     "content": "The analyst answered:\n\nQ: When it comes to actually running this — where does the booking data live for you?\nA: Simulated"
+    }
+   ]
+  },
+  {
+   "role": "assistant",
+   "content": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01LLwQRZst7hpt5H8NxVV9ra",
+     "name": "invoke_subagent",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "agent": "interviewer",
+      "resume": true,
+      "task": "The analyst answered:\n\nQ: When it comes to actually running this — where does the booking data live for you?\nA: \"Simulated\" — nothing to share yet; generate data from the graph so we can check the design and the estimator work.\n\nContinue the interview. Note this is exchange 3, so after your next question I owe the analyst a budget checkpoint (proceed / keep going / park), which I will run — but keep asking your one question. One question per turn, 2-4 concrete options."
+     }
+    }
+   ]
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_01LLwQRZst7hpt5H8NxVV9ra",
+     "content": "Recorded: `data_mode: simulated`. That's an honest and useful place to start — it will test that the design runs and that the estimator recovers an effect we plant. I've written into the record, in bold, that **nothing from this question is evidence about the company**, and that `observed: true/false` on the nodes below is a design choice rather than a fact about your systems.\n\nNow the thing that decides whether this is identifiable at all. The only untreated group in existence is **bookings departing 2027+**. For that group to be a valid control, the flip must not have changed *which departure date people book*. If a member weighing a March-2027 holiday saw a much richer Avios rate on a December-2026 one and moved, then the treated group is inflated and the control group is depleted by the same people — and the boundary comparison overstates the effect roughly twice over. It would also mean the \"extra bookings\" were pulled forward rather than created.\n\nThis is the one thing the wiki cannot tell me and you can.\n\n---\n\n**QUESTION FOR THE ANALYST:**\n\n> During those two weeks, how plausible is it that a member **moved their departure date into 2026** — or brought a trip forward — to get the better conversion rate?\n\n**Options:**\n1. **Very plausible** — members are flexible on dates and the rate difference was large and visible at the point of choosing. Pull-forward is a real risk.\n2. **Unlikely** — by August, people booking 2027 departures are a different kind of trip (long-haul, planned, school holidays) with almost no overlap with near-term 2026 bookings.\n3. **Possible but small** — some flexibility exists, but the rate isn't shown prominently enough at date-selection for most members to react.\n4. **Not sure — but members were never told the flip was happening**, so they couldn't have deliberately gamed it."
+    }
+   ]
+  },
+  {
+   "role": "assistant",
+   "content": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01SkqserTRBv3hKvBzVPwXsQ",
+     "name": "ask_analyst",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "questions": [
+       {
+        "header": "Date shifting",
+        "question": "During those two weeks, how plausible is it that a member **moved their departure date into 2026** — or brought a trip forward — to get the better conversion rate?",
+        "options": [
+         {
+          "label": "Very plausible",
+          "description": "Members are flexible on dates and the rate difference was large and visible at the point of choosing. Pull-forward is a real risk."
+         },
+         {
+          "label": "Unlikely",
+          "description": "By August, people booking 2027 departures are a different kind of trip (long-haul, planned, school holidays) with almost no overlap with near-term 2026 bookings."
+         },
+         {
+          "label": "Possible but small",
+          "description": "Some flexibility exists, but the rate isn't shown prominently enough at date-selection for most members to react."
+         },
+         {
+          "label": "Not sure, but no announcement",
+          "description": "Members were never told the flip was happening, so they couldn't have deliberately gamed it."
+         }
+        ]
+       }
+      ]
+     }
+    }
+   ]
   }
  ],
  "agents": {
@@ -789,6 +866,57 @@
      {
       "type": "text",
       "text": "That's a materially better position than the wiki had recorded. I've corrected both pages: the hidden group is **non-members**, not non-redeemers.\n\nWhy it matters: member booking volume *is* an observable outcome, and it splits into redeeming and non-redeeming bookings. That's what lets us separate a real increase in bookings from members simply **switching into redeeming** on holidays they'd have booked anyway — which is the single most likely way this experiment looks successful while creating no incremental volume at all.\n\nBefore I go further into structure, I need to settle what we'll actually run this against, because it decides what any number is worth and there is no warehouse access skill here yet.\n\n---\n\n**QUESTION FOR THE ANALYST:**\n\n> When it comes to actually running this — where does the booking data live for you?\n\n**Options:**\n1. **Live** — I have a real connection in my own environment (warehouse/notebook) and can run against the real bookings data. *(An estimate here is about the company. If a connection needs building, that's a job for `technician`.)*\n2. **Sample** — I can hand you an extract (CSV/parquet) of member bookings over the relevant period. *(An estimate is about that extract; I'll need to know how it was filtered.)*\n3. **Simulated** — nothing available to share yet; generate data from the graph so we can check the design and the estimator work. *(Tests the code, never says anything about the company.)*\n4. **Live for me to run, but start me off on simulated** — you write and check the machinery on simulated data, I run the real thing my end."
+     }
+    ]
+   },
+   {
+    "role": "user",
+    "content": "The analyst answered:\n\nQ: When it comes to actually running this — where does the booking data live for you?\nA: \"Simulated\" — nothing to share yet; generate data from the graph so we can check the design and the estimator work.\n\nContinue the interview. Note this is exchange 3, so after your next question I owe the analyst a budget checkpoint (proceed / keep going / park), which I will run — but keep asking your one question. One question per turn, 2-4 concrete options."
+   },
+   {
+    "role": "assistant",
+    "content": [
+     {
+      "type": "thinking",
+      "thinking": "",
+      "signature": "CAIS3AQKjgEIERgCKkBEWlVAavrOeNj2gqzco9+cYrTajARbbx+VJ9mjaCQZ153pjOszx8D3d8lPwbcvxqtMyaxF5DHVY8MEbQpWwtuqMg1jbGF1ZGUtb3B1cy01OAFCCHRoaW5raW5nWiQwNjU0YzEzNC0wNTU4LTRhOWQtYjRkNi1mMjRjZjY2ZjdmOGaoAcTu+9QGEgybmtJm+uH8HE4C/FIaDPvFLHSuIIlJgBhc/SIwUsD6zqrRAxUVU/5Kr0bjaaO1zJvW5VsIm44pKIFz3I2f6dKE7Ejv5qIU9s3lRkfJKvoCIqfnvQd/e81i5upcAIqPlo4HbQU61WnK1BR0UipKsbOt0vg5C3USfAKz3qC/R+sH9Dnegc9IyXoW5XHw/GCLezfJ6/9w2H+XOdtBJ0I/cqBDnmRKbHfJi+VJ7/O6bdiUnYDpugFR3Niekq5fjP/c3okvpJKVYarJ8adF3bVR01vBHnQH7EClSPCGTkXkQGP+1qpjH+bwDhqtllfNmJaCe5Hs5OgA/eOn+8Lt3Xyw4jNNg2GJADi0lh+YeMJXawLdRUIUmgSA7OtlPcS6TYXTtuFcfPpwLcC9s+5xVPudzUy1nCYMuyxoHl8cb0FjDDCLh0P5l8wVcc64WzbRazWnel7nuZfwGlzGxR5BgzRzJY38725kCFPNKGvS0pkvBUrda9SrztIbFS8SskSqgbMgmGdAeR5OCeAApEaMC7Uw0fNN6S9GGcP0n9nPCNvAfZFpgrCjS3bE0QBr09TGqDCuZlYLuX8cLeHkBvBiywsKR03ea24B9UP0gVmwGAE="
+     },
+     {
+      "type": "tool_use",
+      "id": "toolu_01QV2gwvEHZYChDWJuwpZfGL",
+      "name": "edit_file",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "file_path": "wiki/questions/q-0001/q-0001.md",
+       "old_string": "data_mode: null       # live | sample | simulated — decides what any number here is worth",
+       "new_string": "data_mode: simulated  # confirmed by analyst {q:q-0001 on:2026-09-07} — nothing to share yet.\n                      # NOTHING from this question is evidence about the company. It tests\n                      # that the design runs and that the estimator recovers a planted effect.\n                      # observed: true/false on nodes below is a DESIGN CHOICE, not a fact."
+      }
+     }
+    ]
+   },
+   {
+    "role": "user",
+    "content": [
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_01QV2gwvEHZYChDWJuwpZfGL",
+      "content": "The file wiki/questions/q-0001/q-0001.md has been updated (commit e8bdabc). Here's the result of running `cat -n` on a snippet of the edited file:\n     9\tdelivery: staged      # staged (dag first, default) | full (everything at once, they asked)\n    10\trun_here: false"
+     }
+    ]
+   },
+   {
+    "role": "assistant",
+    "content": [
+     {
+      "type": "thinking",
+      "thinking": "",
+      "signature": "CAISxAoKjgEIERgCKkAMPFlcPWjvClXDylZgGTQG5MX50HyqkR6bloSoxbEPkd5Bb9YMqMrWRVWNWHrpWeGi29fkzUs5KMSjtu130LcyMg1jbGF1ZGUtb3B1cy01OAFCCHRoaW5raW5nWiQwNjU0YzEzNC0wNTU4LTRhOWQtYjRkNi1mMjRjZjY2ZjdmOGaoAdDu+9QGEgwAeYOWTnDkG42xlQkaDAx01oEBJWrnaTYqDiIwyIzX9cRnf3SXxe/jfV3AcbEa8udmMM8Ng7FGsvjm8JhqHyfVls9n55NJNahDmmHGKuIISoNArsJrc51DcXaAZMAANSEOhet0uTMRfu9/y5b1gSBpkKt+bHFrSiYJQmxGUn0+1uLk5iQLSKgV66mD8f3BVdRFKOD02mkef/l/ulhMv+jn78X/o2wkz5Lyv6jg1A55pfi/pMnmuHCNl0I5sP/1TXHuPwZwlie2I/F6Uut9ktM2t0Do91VZ1+Ycds5DvSSm8GYhMfLBQqTM1/9Mnz6pKFrCPrybP69eVQX6Eh509tt94npRNMJ02gjbx+2ymL3f7fiaS+IHDs2DN9vrErk6zdiMwtuwqVwHT3AmLY4uu48Hpm5PgOlrMJq+MxunjtcZtzSYJiAYS/cRO36W8KiU/LpBsZSwIBx8G8yReZJB1g9M9rFc23ijEV6tyGn/MxMBQAIomvgKUoKNVPBc8iNFq/TuXGu0Xex+3SvGStphcZDCoJHljcvTUwrRPM0dxKnggiTuDN2SG3QIFMR1WDI6fqFTkc9G+LIaJCFyDheO86EICxHV5jarde3PgThJGKNDLwUx6RXQmk1FCpWR7m7fBfRmFUKqyJI4kFsO5mHbhgrBj4HieRygd5KpxcKHWrTJVZuDTdmEEE3NVWMAmAdTf9778Toj9cbN8iXT3cIUobiUoXfNo/ahwwNM9uIb44Ps/EQKdmsCqvXkRk859kRjFNRiqsjVdHw4gOtYEGV91lQaecMangJ6Ex2hRArK2VaYywY1aIb5j6LFM62YHGUr5PZoE4RbMt4e66j5nuBPNIUBr/AjUWrjsI2f9nzbu4xLhpUUehVnTV0zCR9/YMJcZCiv4136QJXRfjR5MnvGXtxGcbtky8R5Vmy0MXkCHRXiiZzK130M6/4DI8OO7jVtaALrqJBM6fPqhvCRa+FHwe2jw8EyaLbZQZPSB5cZOjzr4Q0kYsd4Yn7hmWcxzE/7mjtsB8f/on450RpLxyJ+fuNa5a3VWOevTVFkSx4jLqAL6AYpbHBHiRpgcBgoB3sFDiUUcd/OkBhQhyxqjSx9ugFZQg6/REEzGP41D7HPgYvqcGX6Qcc80iYeGGByNr5xV4IedEDq6bE7lVdnAyj0jQ5wcOGC17isIogSZhW/dNHjosJFNn3DAFuW/RtZcmEGxQktd3f8snInWNnhB8KYoYNnE9YwGc/MZj2Ounpq3tK1WzeYurqSQjhU6ZMQghneHnYxuQqYi1lSogBkBDF1ucU4r8VoxVKn3w08iuOXwZPmajsZxJKD1741bispbyuLUG6OtJyqQY2lxdVxTLPHns0nkbJriCy5XWcoWBAxnD/AMXfYyAJiHCYyCXECeyV+FWhy/g1KWqho8gKy/3LUz4Xysq5qd9p7aPIp95kxhjdS5dLApENZi1viNNL2gG4bi4UPPQkm+kxFqEwzQCXdZi2B4L7jEQ7T//GfP9ESDoEJ+sPRnzdvhWXoL5DfBvxQyYwqCsGGiQZfafESFZNRykS4/5CuXupKNzCar3A/wSGTkLvFBKiuoJ4adOzTPf/OjSodGAE="
+     },
+     {
+      "type": "text",
+      "text": "Recorded: `data_mode: simulated`. That's an honest and useful place to start — it will test that the design runs and that the estimator recovers an effect we plant. I've written into the record, in bold, that **nothing from this question is evidence about the company**, and that `observed: true/false` on the nodes below is a design choice rather than a fact about your systems.\n\nNow the thing that decides whether this is identifiable at all. The only untreated group in existence is **bookings departing 2027+**. For that group to be a valid control, the flip must not have changed *which departure date people book*. If a member weighing a March-2027 holiday saw a much richer Avios rate on a December-2026 one and moved, then the treated group is inflated and the control group is depleted by the same people — and the boundary comparison overstates the effect roughly twice over. It would also mean the \"extra bookings\" were pulled forward rather than created.\n\nThis is the one thing the wiki cannot tell me and you can.\n\n---\n\n**QUESTION FOR THE ANALYST:**\n\n> During those two weeks, how plausible is it that a member **moved their departure date into 2026** — or brought a trip forward — to get the better conversion rate?\n\n**Options:**\n1. **Very plausible** — members are flexible on dates and the rate difference was large and visible at the point of choosing. Pull-forward is a real risk.\n2. **Unlikely** — by August, people booking 2027 departures are a different kind of trip (long-haul, planned, school holidays) with almost no overlap with near-term 2026 bookings.\n3. **Possible but small** — some flexibility exists, but the rate isn't shown prominently enough at date-selection for most members to react.\n4. **Not sure — but members were never told the flip was happening**, so they couldn't have deliberately gamed it."
      }
     ]
    }
@@ -1317,37 +1445,156 @@
      "multiSelect": false
     }
    ]
+  },
+  {
+   "t": "2026-09-07T17:41:15.701Z",
+   "kind": "user",
+   "agent": "analyst",
+   "text": "The analyst answered:\n\nQ: When it comes to actually running this — where does the booking data live for you?\nA: Simulated"
+  },
+  {
+   "t": "2026-09-07T17:41:21.491Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "invoke_subagent",
+   "input": {
+    "agent": "interviewer",
+    "resume": true,
+    "task": "The analyst answered:\n\nQ: When it comes to actually running this — where does the booking data live for you?\nA: \"Simulated\" — nothing to share yet; generate data from the graph so we can check the design and the estimator work.\n\nContinue the interview. Note this is exchange 3, so after your next question I owe the analyst a budget checkpoint (proceed / keep going / park), which I will run — but keep asking your one question. One question per turn, 2-4 concrete options."
+   }
+  },
+  {
+   "t": "2026-09-07T17:41:21.491Z",
+   "kind": "agent_start",
+   "agent": "interviewer",
+   "task": "The analyst answered:\n\nQ: When it comes to actually running this — where does the booking data live for you?\nA: \"Simulated\" — nothing to share yet; generate data from the graph so we can check the design and the estimator work.\n\nContinue the interview. Note this is exchange 3, so after your next question I owe the analyst a budget checkpoint (proceed / keep going / park), which I will run — but keep asking your one question. One question per turn, 2-4 concrete options.",
+   "status": "resumed"
+  },
+  {
+   "t": "2026-09-07T17:41:27.295Z",
+   "kind": "tool",
+   "agent": "interviewer",
+   "name": "edit_file",
+   "input": {
+    "file_path": "wiki/questions/q-0001/q-0001.md",
+    "old_string": "data_mode: null       # live | sample | simulated — decides what any number here is worth",
+    "new_string": "data_mode: simulated  # confirmed by analyst {q:q-0001 on:2026-09-07} — nothing to share yet.\n                      # NOTHING from this question is evidence about the company. It tests\n                      # that the design runs and that the estimator recovers a planted effect.\n                      # observed: true/false on nodes below is a DESIGN CHOICE, not a fact."
+   }
+  },
+  {
+   "t": "2026-09-07T17:41:28.011Z",
+   "kind": "commit",
+   "agent": "interviewer",
+   "path": "wiki/questions/q-0001/q-0001.md",
+   "commit": "e8bdabca0e8848ef15aa9eede6f622794a220658",
+   "url": "https://github.com/Guidosalimbeni/cb_wiki_storage/commit/e8bdabca0e8848ef15aa9eede6f622794a220658",
+   "text": "edit wiki/questions/q-0001/q-0001.md"
+  },
+  {
+   "t": "2026-09-07T17:41:44.609Z",
+   "kind": "text",
+   "agent": "interviewer",
+   "text": "Recorded: `data_mode: simulated`. That's an honest and useful place to start — it will test that the design runs and that the estimator recovers an effect we plant. I've written into the record, in bold, that **nothing from this question is evidence about the company**, and that `observed: true/false` on the nodes below is a design choice rather than a fact about your systems.\n\nNow the thing that decides whether this is identifiable at all. The only untreated group in existence is **bookings departing 2027+**. For that group to be a valid control, the flip must not have changed *which departure date people book*. If a member weighing a March-2027 holiday saw a much richer Avios rate on a December-2026 one and moved, then the treated group is inflated and the control group is depleted by the same people — and the boundary comparison overstates the effect roughly twice over. It would also mean the \"extra bookings\" were pulled forward rather than created.\n\nThis is the one thing the wiki cannot tell me and you can.\n\n---\n\n**QUESTION FOR THE ANALYST:**\n\n> During those two weeks, how plausible is it that a member **moved their departure date into 2026** — or brought a trip forward — to get the better conversion rate?\n\n**Options:**\n1. **Very plausible** — members are flexible on dates and the rate difference was large and visible at the point of choosing. Pull-forward is a real risk.\n2. **Unlikely** — by August, people booking 2027 departures are a different kind of trip (long-haul, planned, school holidays) with almost no overlap with near-term 2026 bookings.\n3. **Possible but small** — some flexibility exists, but the rate isn't shown prominently enough at date-selection for most members to react.\n4. **Not sure — but members were never told the flip was happening**, so they couldn't have deliberately gamed it."
+  },
+  {
+   "t": "2026-09-07T17:41:44.609Z",
+   "kind": "agent_end",
+   "agent": "interviewer",
+   "status": "done",
+   "text": "Recorded: `data_mode: simulated`. That's an honest and useful place to start — it will test that the design runs and that the estimator recovers an effect we plant. I've written into the record, in bold, that **nothing from this question is evidence about the company**, and that `observed: true/false` on the nodes below is a design choice rather than a fact about your systems.\n\nNow the thing that decides whether this is identifiable at all. The only untreated group in existence is **bookings departing 2027+**. For that group to be a valid control, the flip must not have changed *which departure date people book*. If a member weighing a March-2027 holiday saw a much richer Avios rate on a December-2026 one and moved, then the treated group is inflated and the control group is depleted by the same people — and the boundary comparison overstates the effect roughly twice over. It would also mean the \"extra bookings\" were pulled forward rather than created.\n\nThis is the one thing the wiki cannot tell me and you can.\n\n---\n\n**QUESTION FOR THE ANALYST:**\n\n> During those two weeks, how plausible is it that a member **moved their departure date into 2026** — or brought a trip forward — to get the better conversion rate?\n\n**Options:**\n1. **Very plausible** — members are flexible on dates and the rate difference was large and visible at the point of choosing. Pull-forward is a real risk.\n2. **Unlikely** — by August, people booking 2027 departures are a different kind of trip (long-haul, planned, school holidays) with almost no overlap with near-term 2026 bookings.\n3. **Possible but small** — some flexibility exists, but the rate isn't shown prominently enough at date-selection for most members to react.\n4. **Not sure — but members were never told the flip was happening**, so they couldn't have deliberately gamed it."
+  },
+  {
+   "t": "2026-09-07T17:41:48.888Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "ask_analyst",
+   "input": {
+    "questions": [
+     {
+      "header": "Date shifting",
+      "question": "During those two weeks, how plausible is it that a member **moved their departure date into 2026** — or brought a trip forward — to get the better conversion rate?",
+      "options": [
+       {
+        "label": "Very plausible",
+        "description": "Members are flexible on dates and the rate difference was large and visible at the point of choosing. Pull-forward is a real risk."
+       },
+       {
+        "label": "Unlikely",
+        "description": "By August, people booking 2027 departures are a different kind of trip (long-haul, planned, school holidays) with almost no overlap with near-term 2026 bookings."
+       },
+       {
+        "label": "Possible but small",
+        "description": "Some flexibility exists, but the rate isn't shown prominently enough at date-selection for most members to react."
+       },
+       {
+        "label": "Not sure, but no announcement",
+        "description": "Members were never told the flip was happening, so they couldn't have deliberately gamed it."
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "t": "2026-09-07T17:41:48.888Z",
+   "kind": "ask",
+   "agent": "main",
+   "questions": [
+    {
+     "question": "During those two weeks, how plausible is it that a member **moved their departure date into 2026** — or brought a trip forward — to get the better conversion rate?",
+     "header": "Date shiftin",
+     "options": [
+      {
+       "label": "Very plausible",
+       "description": "Members are flexible on dates and the rate difference was large and visible at the point of choosing. Pull-forward is a real risk."
+      },
+      {
+       "label": "Unlikely",
+       "description": "By August, people booking 2027 departures are a different kind of trip (long-haul, planned, school holidays) with almost no overlap with near-term 2026 bookings."
+      },
+      {
+       "label": "Possible but small",
+       "description": "Some flexibility exists, but the rate isn't shown prominently enough at date-selection for most members to react."
+      },
+      {
+       "label": "Not sure, but no announcement",
+       "description": "Members were never told the flip was happening, so they couldn't have deliberately gamed it."
+      }
+     ],
+     "multiSelect": false
+    }
+   ]
   }
  ],
- "commits": 4,
+ "commits": 5,
  "usage": {
-  "input": 217090,
-  "output": 7657,
-  "cacheRead": 187078
+  "input": 287576,
+  "output": 9577,
+  "cacheRead": 229172
  },
  "pending": {
-  "toolUseId": "toolu_01KDAMYsTVVLSP57T8mvafxB",
+  "toolUseId": "toolu_01SkqserTRBv3hKvBzVPwXsQ",
   "toolName": "ask_analyst",
   "payload": [
    {
-    "question": "When it comes to actually running this — where does the booking data live for you?",
-    "header": "Data mode",
+    "question": "During those two weeks, how plausible is it that a member **moved their departure date into 2026** — or brought a trip forward — to get the better conversion rate?",
+    "header": "Date shiftin",
     "options": [
      {
-      "label": "Live",
-      "description": "I have a real connection in my own environment (warehouse/notebook) and can run against real bookings data. An estimate here is about the company. If a connection needs building, that's a job for technician."
+      "label": "Very plausible",
+      "description": "Members are flexible on dates and the rate difference was large and visible at the point of choosing. Pull-forward is a real risk."
      },
      {
-      "label": "Sample extract",
-      "description": "I can hand you an extract (CSV/parquet) of member bookings over the relevant period. An estimate is about that extract; I'll need to know how it was filtered."
+      "label": "Unlikely",
+      "description": "By August, people booking 2027 departures are a different kind of trip (long-haul, planned, school holidays) with almost no overlap with near-term 2026 bookings."
      },
      {
-      "label": "Simulated",
-      "description": "Nothing available to share yet; generate data from the graph so we can check the design and the estimator work. Tests the code, never says anything about the company."
+      "label": "Possible but small",
+      "description": "Some flexibility exists, but the rate isn't shown prominently enough at date-selection for most members to react."
      },
      {
-      "label": "Simulated first, live my end",
-      "description": "You write and check the machinery on simulated data, I run the real thing my end."
+      "label": "Not sure, but no announcement",
+      "description": "Members were never told the flip was happening, so they couldn't have deliberately gamed it."
      }
     ],
     "multiSelect": false
@@ -1356,24 +1603,24 @@
   "partialResults": [],
   "questions": [
    {
-    "question": "When it comes to actually running this — where does the booking data live for you?",
-    "header": "Data mode",
+    "question": "During those two weeks, how plausible is it that a member **moved their departure date into 2026** — or brought a trip forward — to get the better conversion rate?",
+    "header": "Date shiftin",
     "options": [
      {
-      "label": "Live",
-      "description": "I have a real connection in my own environment (warehouse/notebook) and can run against real bookings data. An estimate here is about the company. If a connection needs building, that's a job for technician."
+      "label": "Very plausible",
+      "description": "Members are flexible on dates and the rate difference was large and visible at the point of choosing. Pull-forward is a real risk."
      },
      {
-      "label": "Sample extract",
-      "description": "I can hand you an extract (CSV/parquet) of member bookings over the relevant period. An estimate is about that extract; I'll need to know how it was filtered."
+      "label": "Unlikely",
+      "description": "By August, people booking 2027 departures are a different kind of trip (long-haul, planned, school holidays) with almost no overlap with near-term 2026 bookings."
      },
      {
-      "label": "Simulated",
-      "description": "Nothing available to share yet; generate data from the graph so we can check the design and the estimator work. Tests the code, never says anything about the company."
+      "label": "Possible but small",
+      "description": "Some flexibility exists, but the rate isn't shown prominently enough at date-selection for most members to react."
      },
      {
-      "label": "Simulated first, live my end",
-      "description": "You write and check the machinery on simulated data, I run the real thing my end."
+      "label": "Not sure, but no announcement",
+      "description": "Members were never told the flip was happening, so they couldn't have deliberately gamed it."
      }
     ],
     "multiSelect": false
