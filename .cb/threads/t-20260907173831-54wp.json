@@ -1,0 +1,1081 @@
+{
+ "id": "t-20260907173831-54wp",
+ "title": "q-0001 · in relation to the change in price configuration for pwa in august 2026, no random experiments were conducted, h",
+ "created": "2026-09-07T17:38:31.234Z",
+ "updated": "2026-09-07T17:39:48.980Z",
+ "awaiting": "answer",
+ "main": [
+  {
+   "role": "user",
+   "content": "[/cb_ask \"in relation to the change in price configuration for pwa in august 2026, no random experiments were conducted, how can i estimate the impact of the change in terms of booking volume?\"]\n\nA question is opening. Verbatim, this is what was asked:\n\nin relation to the change in price configuration for pwa in august 2026, no random experiments were conducted, how can i estimate the impact of the change in terms of booking volume?\n\n1. Read `wiki/README.md`, then grep the wiki for every noun in the question. Read what\n   comes back — concepts, events, processes, experiments, methods, literature, traps.\n   Read `wiki/questions/INDEX.md` too: this may be a question we have already answered.\n   **Then walk the graph** — read `wiki/concepts/` and work out what already causes this\n   outcome, what the treatment already causes, and what sits upstream of both. Anything\n   upstream of both is a confounder we have already established, and it gets stated\n   rather than asked about. Grep finds words; only the graph finds structure.\n   **Then read `.claude/SKILLS.md`** — what we can already *do*. An existing access skill\n   makes `live` data cheap instead of a project; an existing method skill means the\n   analysis is largely written. This changes what is worth proposing, so it belongs\n   before the interview, not after it.\n2. Create `wiki/questions/<qid>/<qid>.md` from `wiki/_templates/question.md`. Next free\n   id; `state: interviewing`. Fill `aliases:` with the words the analyst actually used —\n   that is how anyone finds this again in a month.\n3. Add the one-line entry to `wiki/questions/INDEX.md` now, not at close.\n4. Invoke the `running-an-interview` skill and run the interview.\n\n**Open by showing what you already found.** Never ask what the wiki answers.\n\nThree things the interview has to settle beyond the graph, and the skill says when to ask\neach:\n\n- **`data_mode`** — `live` (real connection in their environment), `sample` (an extract\n  they can give us), or `simulated` (no data; we generate it from the graph). This\n  changes what every later number is worth, so it is asked early.\n- **`deliverable`** — `notebook`, `report`, or `both`. Not every question wants code. A\n  test design usually wants an argument on a page.\n- **`delivery`** — `staged` (DAG notebook first, the default) or `full` (everything in\n  one pass, because they asked).\n\n**The interview has a budget.** Checkpoint at the third exchange and every third one\nafter: proceed, keep going, or park. The skill says how.\n\nIf the question has no dataset behind it, it is a methodology question — the skill has a\nsection for that, and it ends in `wiki/methods/`, not a graph."
+  },
+  {
+   "role": "assistant",
+   "content": [
+    {
+     "type": "text",
+     "text": "I'll start by reading the wiki."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_018dknf4r7tQE9uKas2yQsDt",
+     "name": "read_file",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "file_path": "wiki/README.md"
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_019KrpNxSkv9ooT5z6rJkqZE",
+     "name": "read_file",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "file_path": "wiki/questions/INDEX.md"
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01YJCW8ew9LoLnGMDWSm3eQR",
+     "name": "read_file",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "file_path": ".claude/SKILLS.md"
+     }
+    }
+   ]
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_018dknf4r7tQE9uKas2yQsDt",
+     "content": "     1\t# The wiki\n     2\t\n     3\tEverything true about this company, in markdown. Read this file first, every session.\n     4\t\n     5\t## This is one half of the system\n     6\t\n     7\t`wiki/` is **what is true about this company** — the graph, the tables, the events, what\n     8\twe have already measured, what we have read.\n     9\t\n    10\t`.claude/skills/` is **what we have learned to do here** — connecting to the warehouse,\n    11\tthe estimator that works when a display rule rather than randomisation decides exposure,\n    12\thow a result gets written up so people here act on it. The inventory is\n    13\t`.claude/SKILLS.md`, and it says how a skill earns its way from staging into trusted.\n    14\t\n    15\tNeither was written in advance. **Both accumulate from real questions, and they\n    16\taccumulate together**: a question adds facts to the wiki and, when the work was genuinely\n    17\tnovel, a procedure to the skills. A question that leaves both unchanged was a wasted\n    18\tquestion.\n    19\t\n    20\t| Folder | What lives there | Written when |\n    21\t|---|---|---|\n    22\t| `concepts/` | **The causal graph.** One file per variable. | During interviews |\n    23\t| `tables/` | Semantic layer: tables, columns, grains, joins, filters, gotchas | Ingest |\n    24\t| `events/` | What the company changed, and when | Interviews and ingest |\n    25\t| `processes/` | How the business actually works, in prose | Ingest and interviews |\n    26\t| `experiments/` | Past tests, what they found, **and the priors they hand you** | Ingest and close |\n    27\t| `methods/` | **How we measure things here.** Standing methodology, reviewed | When a methodology question is settled |\n    28\t| `literature/` | **What the field says.** Papers, library docs, other companies | Ingest |\n    29\t| `traps/` | Mistakes that keep happening here | After questions |\n    30\t| `questions/` | One folder per question: record, notebook or report, result | The whole lifecycle |\n    31\t| `questions/INDEX.md` | **One line per question. The entry point.** | At ask, and at close |\n    32\t\n    33\tTemplates for each are in `_templates/`.\n    34\t\n    35\t## Finding a question again a month later\n    36\t\n    37\tNobody says \"q-0042\" out loud. They say \"that Avios thing\", or \"what Priya asked before\n    38\tthe offsite\". Three mechanisms, all cheap, and they only work if they are kept up:\n    39\t\n    40\t1. **`questions/INDEX.md`** — one line each, and a single file read. Look here first,\n    41\t   before assuming a question is new.\n    42\t2. **`aliases:` in the question frontmatter** — the words people actually use, written the\n    43\t   way they say them. This is what makes grep work later.\n    44\t3. **`{q:q-0042 on:2026-09-06}` on anything a question wrote** — the same visible span the\n    45\t   graph uses for edges. One convention, both jobs.\n    46\t\n    47\tAnd when something arrives after the fact — the test ran, the stakeholders decided, the\n    48\testimate turned out wrong — it goes into that question's `## Outcome log`, dated,\n    49\tappend-only, via `/cb_outcome`. **A concluded question is not closed to evidence.**\n    50\t\n    51\t## The graph\n    52\t\n    53\tOne markdown file per variable in `concepts/`. The headings carry direction and kind —\n    54\tObsidian's graph view has neither, so the structure has to.\n    55\t\n    56\t- `## Caused by` — incoming causal edge\n    57\t- `## Causes` — outgoing causal edge\n    58\t- `## Computed from` — **arithmetic only**, never causal\n    59\t\n    60\tAn edge may be declared from either end. Each bullet is a wikilink, one line of\n    61\treasoning, and a `{by:... on:...}` span recording who confirmed it. No span means\n    62\tnobody has confirmed it yet.\n    63\t\n    64\t`measured_at` in the frontmatter is the most valuable field in the wiki. It is what\n    65\tstops a mediator being used as a control, and no semantic layer records it.\n    66\t\n    67\t## Concepts vs columns\n    68\t\n    69\tA **concept** is a causal variable and gets a node file. A **column** is one physical\n    70\tplace it is stored and lives on a table page. Many columns, one concept.\n    71\t\n    72\tMerge two columns into one concept only if a causal claim about one is a causal claim\n    73\tabout the other: same quantity, same grain, same timing. `churn_30d` and `churn_90d`\n    74\tare two concepts, not one — different timing, and they can sit on opposite ends of the\n    75\tsame edge.\n    76\t\n    77\t**Do not create a concept for every column.** A column becomes a concept when a\n    78\tquestion needs it in a graph. Most never will.\n    79\t\n    80\t## Named graphs\n    81\t\n    82\t`graphs: [pricing, retention]` in the frontmatter. A company has many loosely-connected\n    83\tcausal areas and one big graph is unreadable. Membership is declared in the node, never\n    84\tin a separate list, so nothing can fall out of sync.\n    85\t\n    86\t## Methods and experiments get read *before* the graph\n    87\t\n    88\tTwo folders answer questions that are not about any one dataset.\n    89\t\n    90\t`methods/` is the company's standing answer to \"how should we measure this?\" —\n    91\tincrementality, holdout design, when a contextual bandit beats a fixed A/B test, what\n    92\tMMM is and is not good for. Some have a notebook behind them, some are a white paper,\n    93\tsome are one hard-won paragraph. Every page carries `tags: [method]` and lists the\n    94\tquestions that used it, so a technique and the artefacts built with it stay linked in\n    95\tboth directions.\n    96\t\n    97\tA method is **amended, never quietly replaced.** It binds every future question, so a\n    98\tchange to one is proposed, reviewed and confirmed the way a causal edge is.\n    99\t\n   100\tEvery method page carries **`evidence:`** as well as `status:`, and they are different\n   101\tclaims. `status: established` means everyone here follows it. `evidence: none-yet` means\n   102\tnothing has tested it — the honest and common state for a design that stakeholders\n   103\tapproved before it ran. Such a method binds future questions **as a convention, not as a\n   104\tfinding**, and says so on its face. When something finally runs, the page is amended and\n   105\t`evidence:` moves to `ran-once`, then `replicated`. A design that turned out wrong is\n   106\tamended too, and that amendment is worth more than the original page.\n   107\t\n   108\t`literature/` is everything read from outside: DoWhy or Meridian documentation, a paper\n   109\tworth keeping, a blog post from a company with our problem. Each page records the claim\n   110\t*stated precisely enough to be wrong*, what it assumes, what it does **not** cover, and a\n   111\ttrust level with a reason. The `scholar` agent reads this folder before answering\n   112\tanything methodological, and it marks its own claims `[lib]` or `[bg]` so a citation is\n   113\tnever confused with a recollection.\n   114\t\n   115\t`experiments/` is what we have already measured. Read it before designing anything. A\n   116\trandomised estimate is a **prior**: fitting a parameter freely when an experiment\n   117\talready measured it throws away the best evidence in the building. This is the whole\n   118\treason the folder exists — asked for an MMM, the channel priors should come from the\n   119\tgeo tests and holdouts recorded here, not from a default.\n   120\t\n   121\t## Seeing the graph in Obsidian\n   122\t\n   123\tEvery file in `concepts/` carries `tags: [dag]`. **Nothing else in the wiki carries it.**\n   124\tThat single tag is the whole mechanism: type `tag:#dag` into the graph view's search box\n   125\tand the tables, events, processes and question records drop away, leaving the causal\n   126\tgraph on its own.\n   127\t\n   128\t`wiki/methods/` carries `tags: [method]` and `wiki/literature/` carries\n   129\t`tags: [literature]`, on the same principle. Swap the search box to `tag:#method` for the\n   130\tmethodology layer or `tag:#literature` for what we have read.\n   131\t\n   132\t**Three tags, three layers: what is true here, how we measure it, what the field says.**\n   133\tStop there. The headings already carry direction and kind, and a fourth tag vocabulary\n   134\tthat duplicates them will drift out of sync with them.\n   135\t\n   136\t## Finding things\n   137\t\n   138\tGrep. `rg \"churn\" wiki/`, `rg \"measured_at: post_treatment\" wiki/concepts/`,\n   139\t`rg -l \"pricing\" wiki/concepts/`. The wiki is small enough that search is reading.\n   140\t"
+    },
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_019KrpNxSkv9ooT5z6rJkqZE",
+     "content": "     1\t# Questions\n     2\t\n     3\tOne line per question, oldest first. Written at `/cb_ask`, updated at `/cb_close`.\n     4\t\n     5\t**This is the entry point.** Nobody remembers question ids — they remember \"the Avios\n     6\tthing\" or \"what Priya asked in March\". Search this file and the `aliases:` in each record\n     7\tbefore assuming a question is new, and before filing an outcome that arrived weeks later.\n     8\t\n     9\tA stale index is worse than no index, because people trust it. `/cb_status` repairs it.\n    10\t\n    11\t| id  | what was asked | also called | state | outcome |\n    12\t| --- | -------------- | ----------- | ----- | ------- |\n    13\t|     |                |             |       |         |\n    14\t"
+    },
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_01YJCW8ew9LoLnGMDWSm3eQR",
+     "content": "     1\t# What we can already do\n     2\t\n     3\tThe other half of this system. `wiki/` records **what is true about this company**; these\n     4\trecord **what we have learned to do here**. Neither was written in advance; both\n     5\taccumulate from real questions.\n     6\t\n     7\tOne line per skill. Updated when one is captured, used, or promoted — by `librarian` at\n     8\tclose, and by `technician` when it builds access.\n     9\t\n    10\t**Read this before opening a question.** What we can already do changes what is worth\n    11\tproposing: an existing warehouse connection makes `live` data cheap rather than a\n    12\tproject, and an existing estimator for a shape of problem that recurs here means the\n    13\tanalysis is mostly written already.\n    14\t\n    15\t| skill | kind | standing | used on | what it is for |\n    16\t|---|---|---|---|---|\n    17\t| *(example)* `snowflake-holdout-pull` | ACCESS | staging | q-0031 | assembling a treated/control table from the warehouse |\n    18\t| *(example)* `did-checkout-eligibility` | METHOD | trusted | q-0031, q-0044 | DiD where a display rule, not randomisation, decides exposure |\n    19\t\n    20\t## Kinds\n    21\t\n    22\t- **ACCESS** — reaching a system. Warehouse connections, API clients, export paths,\n    23\t  wherever a result has to land. `technician` owns these.\n    24\t- **METHOD** — how this company does a kind of causal analysis. The estimator that worked\n    25\t  for a problem shape that recurs here, what varies between instances of it, and what was\n    26\t  tried first that did not work.\n    27\t- **REPORTING** — how a result gets written up so people here actually act on it.\n    28\t\n    29\t## Standing\n    30\t\n    31\t- **staging** — `.claude/skills-staging/`. Captured from one question, unproven. Offered\n    32\t  when it looks relevant; never assumed.\n    33\t- **trusted** — `.claude/skills/`. Auto-loaded. It got there by being **used on more than\n    34\t  one question**, or by having its output **checked mechanically** — the notebook ran\n    35\t  clean and its assertions held.\n    36\t\n    37\t`skills_used:` in each question record is what makes the first bar measurable. If nobody\n    38\twrites it, nothing can ever be promoted on evidence, and this library stops growing.\n    39\t\n    40\t**Approval is not a promotion criterion.** Most company analytics is agreed with and\n    41\twrong. A system that promoted skills because stakeholders liked the output would get\n    42\tprogressively better at being persuasive here, which is the exact failure this whole\n    43\tthing exists to prevent.\n    44\t"
+    }
+   ]
+  },
+  {
+   "role": "assistant",
+   "content": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAISoQIKjgEIERgCKkCWFaXjbrWoiS3PGOKI7AKQIjMy2foc7KSsWj9A19Vy9A03u+qO4zKt2jwRdl009wMrxv1cyYm+dEOq3aVRn4VRMg1jbGF1ZGUtb3B1cy01OAFCCHRoaW5raW5nWiQwNjU0YzEzNC0wNTU4LTRhOWQtYjRkNi1mMjRjZjY2ZjdmOGaoAZzt+9QGEgy1CJo9nhzZmZ5R0Z0aDGDemY/WjxeOTj+p7yIwfMVMrFLGFdZ1vkdZcs2SkLA1H2HlvM0m7rJ1NEsaDfj4Hu95tdg311JLpS9lR0DOKkCMWliDad+tCQwdfK5+6+fcA2fR7pRuH2WA1NWbGTAhAmp2qV0In4drbVmNXElcNgtyusfr0lPZwecawgQBx/jSGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01BLfQ1vvpMXctCoe6bGTSas",
+     "name": "glob",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "pattern": "wiki/**/*.md"
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01MeaCiGfLTwzugxNRwxuzaH",
+     "name": "glob",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "pattern": "raw/**/*"
+     }
+    }
+   ]
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_01BLfQ1vvpMXctCoe6bGTSas",
+     "content": "wiki/README.md\nwiki/_templates/concept.md\nwiki/_templates/event.md\nwiki/_templates/experiment.md\nwiki/_templates/literature.md\nwiki/_templates/method.md\nwiki/_templates/question.md\nwiki/_templates/report.md\nwiki/_templates/table.md\nwiki/events/2026-08-conversion-rate-flip-experiment.md\nwiki/experiments/2026-08-conversion-rate-flip.md\nwiki/processes/iagl-pwa-metrics.md\nwiki/processes/pay-with-avios-ba-holidays.md\nwiki/questions/INDEX.md"
+    },
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_01MeaCiGfLTwzugxNRwxuzaH",
+     "content": "raw/.gitkeep\nraw/pwa_exp"
+    }
+   ]
+  },
+  {
+   "role": "assistant",
+   "content": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01FSqNHt9EyRWf6ZwCANcvdS",
+     "name": "read_file",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "file_path": "wiki/events/2026-08-conversion-rate-flip-experiment.md"
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01HP2dausnNLfSNvXiYqk54u",
+     "name": "read_file",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "file_path": "wiki/experiments/2026-08-conversion-rate-flip.md"
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_018c3oEJDSLN2Qdb6HhRLtsB",
+     "name": "read_file",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "file_path": "wiki/processes/iagl-pwa-metrics.md"
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_016Bnp75XPHyqo9fLpPMF9P3",
+     "name": "read_file",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "file_path": "wiki/processes/pay-with-avios-ba-holidays.md"
+     }
+    }
+   ]
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_01FSqNHt9EyRWf6ZwCANcvdS",
+     "content": "     1\t---\n     2\tid: 2026-08-conversion-rate-flip-experiment\n     3\tdate_start: 2026-08-01\n     4\tdate_end: 2026-08-14        # \"first 2 weeks of August 2026\"\n     5\tannounced_on: null          # not stated in source — unknown, flagged below\n     6\ttouches: [pwa_discount_tier_conversion_rate, avios_redeemed, cash, bookings]\n     7\tvisible_in_data: partial    # policy is visible; a clean control group is not\n     8\tsource: raw/pwa_exp   # same text previously ingested under the path raw/iagl_pwa\n     9\trecorded_by: analyst\n    10\trecorded_on: 2026-09-06\n    11\treingested_on: 2026-09-07\n    12\t---\n    13\t\n    14\t## What changed\n    15\tThe mapping between discount tier and conversion rate was flipped for the two-week\n    16\twindow. Normally the **maximum discount** tier carries the **least favourable**\n    17\tconversion rate for the member (down to 0.004) and the **minimum discount** tier the\n    18\t**most favourable** (up to 0.01). During the experiment window this was inverted: the\n    19\tmax discount became the *most* favourable conversion rate, and the min discount the\n    20\t*least* favourable.\n    21\t\n    22\tRationale given: this was expected to be costly to IAGL/BA Holidays in the short run —\n    23\ttreated as an investment intended to drive more bookings and, via the combined IAGL + BA\n    24\tHolidays margin (BA Holidays keeps ~10% of ticket price on top of IAGL's Avios margin),\n    25\tkeep overall margin high despite the richer redemption terms.\n    26\t\n    27\t## Who it applied to\n    28\tAll members, all routes — but **only for bookings with a future departure date within\n    29\t2026**.\n    30\t\n    31\t## Who it did NOT apply to\n    32\tBookings with departure dates in 2027 or later kept the standard (non-flipped)\n    33\tconversion rate schedule. This is the only segmentation boundary recorded — there was no\n    34\tmember-level or route-level split.\n    35\t\n    36\t## Why it matters causally\n    37\tThis was **not a randomised A/B test** — there is no A/B split of members or bookings;\n    38\tthe policy applied uniformly to everyone booking a 2026 departure. The only exploitable\n    39\tboundary is the departure-date cutoff (within-2026 vs 2027+), which is a plausible\n    40\tregression-discontinuity/DiD-style comparison group, not a randomised control.\n    41\t\n    42\tAnnouncement timing is not stated in the source — unknown whether members anticipated\n    43\tthe change. Flagged as unclassified/unknown, see ingest summary.\n    44\t\n    45\t## Known threat to naive analysis\n    46\tA same-period-last-year (Aug 2025) DiD counterfactual was attempted and found to be\n    47\t**biased**: that period was contaminated by a separate, different change made last year.\n    48\tThe 2025 change is not named or dated in the source.\n    49\t\n    50\tSee [[2026-08-conversion-rate-flip]] in `wiki/experiments/` for the design and the\n    51\t(currently absent) readout, [[pay-with-avios-ba-holidays]] for how the product works, and\n    52\t[[iagl-pwa-metrics]] for the margin and cost-per-Avios formulas.\n    53\t"
+    },
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_01HP2dausnNLfSNvXiYqk54u",
+     "content": "     1\t---\n     2\tid: 2026-08-conversion-rate-flip\n     3\tran: [2026-08-01, 2026-08-14]\n     4\tdesign: none — uncontrolled policy change to the whole population\n     5\tunit: booking (segmented only by departure date within/after 2026)\n     6\tgraph: null            # no graph drawn yet — no question has needed one\n     7\tmethods: []\n     8\tsource: raw/pwa_exp\n     9\tpriors: []             # DELIBERATELY EMPTY — no readout exists, see below\n    10\t---\n    11\t\n    12\t## What was tested\n    13\t\n    14\tFor the first two weeks of August 2026, the mapping between discount tier and Avios\n    15\tconversion rate on [[pay-with-avios-ba-holidays]] was **flipped**: the maximum discount\n    16\ttier carried the *most* favourable conversion rate (up to 0.01) and the minimum discount\n    17\ttier the *least* favourable (0.004). Normally the ladder runs the other way.\n    18\t\n    19\tThe change itself is recorded as an event:\n    20\t[[2026-08-conversion-rate-flip-experiment]].\n    21\t\n    22\t## Design\n    23\t\n    24\t**There was no A/B split.** The policy applied to all members and all routes. The only\n    25\tboundary is the booking's **departure date**: it applied to bookings with a departure\n    26\twithin 2026, and not to bookings departing 2027 or later. {source: raw/pwa_exp}\n    27\t\n    28\t## What it found\n    29\t\n    30\t**Nothing yet is recorded.** No readout is in the source material.\n    31\t\n    32\t## Why the obvious readout does not work\n    33\t\n    34\tA DiD against the same period last year (August 2025), with the month before as the\n    35\tpre-period, was attempted and is **biased**: August 2025 was heavily contaminated by a\n    36\tseparate change made in 2025. {source: raw/pwa_exp} That change is not named or dated in\n    37\tthe source — see the ingest summary.\n    38\t\n    39\t## Priors this gives you\n    40\t\n    41\t**None.** This page exists so that nobody treats \"we ran the flip in August 2026\" as\n    42\tevidence about the effect of the flip. The experiment ran; it has not been read out with\n    43\ta defensible counterfactual.\n    44\t\n    45\tWhat is *available* rather than measured: the departure-date boundary (within-2026 vs\n    46\t2027+) is the only untreated comparison group that exists in the data, and it is not\n    47\trandomised — bookings with far-future departures differ from near-term ones in ways that\n    48\tare plausibly related to both redemption behaviour and booking volume.\n    49\t\n    50\t## Do not reuse this if\n    51\t\n    52\tDo not quote any number from this window as an effect of the flip until a design has been\n    53\treviewed. Also note the visibility limit on the outcome: non-member and non-Avios BA\n    54\tHolidays bookings are invisible, so total booking volume is not observable — only\n    55\tAvios-redeeming bookings are.\n    56\t\n    57\t## Questions that used it\n    58\t\n    59\t- (none yet)\n    60\t"
+    },
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_018c3oEJDSLN2Qdb6HhRLtsB",
+     "content": "     1\t# IAGL Pay-with-Avios metric definitions\n     2\t\n     3\tDefinitions exactly as given by the analyst. Source: `raw/pwa_exp`, recorded_by: analyst,\n     4\trecorded_on: 2026-09-07.\n     5\t\n     6\tThese are **arithmetic identities**, not causal statements. If any of these quantities\n     7\tbecomes a node in a graph, the relationship between it and its inputs belongs under\n     8\t`## Computed from`, never `## Caused by`.\n     9\t\n    10\t## Cost per Avios (CPA)\n    11\t\n    12\t    cost_per_avios = sum(cash in window) / sum(avios in window)\n    13\t\n    14\tTypical observed level: **around 0.005**. {source: raw/pwa_exp}\n    15\t\n    16\tNote the window dependence: CPA is a ratio of two sums over a chosen period, not a\n    17\tper-booking average. Changing the window changes the number.\n    18\t\n    19\t## IAGL margin\n    20\t\n    21\t    iagl_margin = sum(avios redeemed in period) * 0.00659 - sum(cash in period)\n    22\t\n    23\t0.00659 is the internal value placed on one Avios. Because CPA is usually ~0.005 against\n    24\ta 0.00659 valuation, the marginal margin per redemption is small.\n    25\t\n    26\t## Combined IAGL + BA Holidays margin\n    27\t\n    28\tBA Holidays is part of IAGL and takes **10% of the ticket price** as its own margin. The\n    29\tAugust 2026 experiment was justified on a *combined* margin basis:\n    30\t\n    31\t    combined_margin = iagl_margin + 0.10 * sum(ticket price in period)\n    32\t\n    33\tThis combined formula is the one the experiment's business case rested on. It is recorded\n    34\there as the definition used; whether it was the right basis is a question, not a fact.\n    35\t\n    36\t## Volume metrics\n    37\t\n    38\t- **Bookings made using the product** — bookings where Avios were redeemed. Bookings made\n    39\t  without Avios, and all non-member bookings, are not visible; see\n    40\t  [[pay-with-avios-ba-holidays]].\n    41\t- **Avios redeemed** and **cash** — the two components of every metric above.\n    42\t"
+    },
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_016Bnp75XPHyqo9fLpPMF9P3",
+     "content": "     1\t# Pay with Avios — BA Holidays\n     2\t\n     3\tHow the product works, as described by the analyst. Facts only; causal claims found in\n     4\tthe source are quarantined at the bottom of this page as attributed prose.\n     5\t\n     6\tSource: `raw/pwa_exp` (same text previously ingested as `raw/iagl_pwa`),\n     7\trecorded_by: analyst, recorded_on: 2026-09-07.\n     8\t\n     9\t## The company and the product\n    10\t\n    11\tIAG Loyalty (IAGL) is the company behind the **Avios** loyalty currency. One of its\n    12\tproducts is **Pay with Avios (PWA) for BA Holidays**: when a member is booking a holiday\n    13\tthey can redeem some of their Avios for a discount on the holiday ticket.\n    14\t\n    15\tBA Holidays is now part of IAGL. BA Holidays' own margin on a booking is **10% of the\n    16\tticket price**. {source: raw/pwa_exp}\n    17\t\n    18\t## The discount ladder\n    19\t\n    20\tAt booking the member is presented with **up to 9 discount options**. Each option is:\n    21\t\n    22\t- a **percentage of the ticket price** taken as discount, and\n    23\t- an **Avios-to-cash conversion rate** attached to that discount tier.\n    24\t\n    25\tThe conversion rate ranges from **0.01** (most favourable to the member — each Avios buys\n    26\tmore discount) down to **0.004** (least favourable).\n    27\t\n    28\tUnder normal policy the ladder is **penalising**: the higher the discount tier, the worse\n    29\tthe conversion rate. That mapping was inverted for two weeks in August 2026 — see\n    30\t[[2026-08-conversion-rate-flip-experiment]].\n    31\t\n    32\t## Key business metrics\n    33\t\n    34\tDefined on the source's own words; see [[iagl-pwa-metrics]] for the formulas.\n    35\t\n    36\t- Number of bookings made using the product\n    37\t- Avios redeemed\n    38\t- Cash (cash paid on the booking)\n    39\t- Cost per Avios = sum of cash in the window ÷ sum of Avios in the window\n    40\t\n    41\t## What is and is not observable\n    42\t\n    43\t**This is the central data limitation of the product.**\n    44\t\n    45\t- Visible: all *logged-in member* activity — searches and bookings.\n    46\t- **Not visible: BA Holidays booking volume independent of Avios use.** Non-member\n    47\t  bookings are hidden from IAGL. {source: raw/pwa_exp}\n    48\t\n    49\tSo the denominator \"all BA Holidays bookings\" does not exist in our data. Any metric\n    50\tphrased as a *share* of total BA Holidays bookings is not computable as stated, and any\n    51\tdesign that needs untreated non-member bookings as a control group is unavailable.\n    52\t\n    53\t## Causal claims made in the source (attributed, not edges)\n    54\t\n    55\tThese are the business's model of the product. They are **not** drawn in\n    56\t`wiki/concepts/` — edges are only drawn in an interview where the analyst confirms them.\n    57\t\n    58\t- The August 2026 experiment rationale argued that a **more attractive conversion rate on\n    59\t  the high-discount tiers would drive more bookings**, and that the extra volume — counted\n    60\t  against the *combined* IAGL + BA Holidays margin — would keep overall margin high\n    61\t  despite a higher short-run redemption cost. {source: raw/pwa_exp}\n    62\t- The source describes marginal margin as \"usually very small\", because cost per Avios\n    63\t  typically sits around **0.005** against an Avios value of 0.00659. {source: raw/pwa_exp}\n    64\t"
+    }
+   ]
+  },
+  {
+   "role": "assistant",
+   "content": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAIS7wIKjgEIERgCKkBa5nlWFUAVbtqdg7WIhMKIuDzx7Up4lEqyg+RX6Rn5JHiJXYaii7QLfYAHvXCjlurKSULMIF8xoktWWjP621mOMg1jbGF1ZGUtb3B1cy01OAFCCHRoaW5raW5nWiQwNjU0YzEzNC0wNTU4LTRhOWQtYjRkNi1mMjRjZjY2ZjdmOGaoAaPt+9QGEgwNJbSqIu2ypoDh0lMaDMT8HMs7Iz/QKT2zTCIwKKVMnU4YFnkenlLSvhqv2GP52iem9gbuXWk391MiiX4kRed5RhrQ8gXiBdHPMACUKo0BIyfVy6w75C09y6K2EMooZR6CfHwFEq2gL9DQAQvRB2CNfp9ECOgYzjk+rgluxc3U/FRQtuP7U8rok/L4DXRFL3jOhTFCgHKtWM3QImbJHEiekWNsS+WlWVWvlXeTi5uNY3FmAcYrSQOztHwBLeiym/vtbbmvTvsj9dGjTskRSy2Loa5YuzRscdeTvlAaGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01LiRmiNmTrAYgKMHesrsCE7",
+     "name": "read_file",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "file_path": "wiki/_templates/question.md"
+     }
+    }
+   ]
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_01LiRmiNmTrAYgKMHesrsCE7",
+     "content": "     1\t---\n     2\tid: q-0042\n     3\ttext: \"Did the March price change drive churn?\"\n     4\taliases: [\"the March price thing\", \"Priya's churn question\"]   # what people actually call it\n     5\topened: 2026-04-02\n     6\tstate: interviewing   # interviewing | notebook-issued | report-issued | result-in | concluded | abandoned\n     7\twindow: [2025-01-01, 2026-03-31]\n     8\toutcome: churn_30d\n     9\ttreatment: price_change     # omit if there isn't one\n    10\tgraph: pricing\n    11\t\n    12\tdata_mode: live       # live | sample | simulated — decides what any number here is worth\n    13\tdeliverable: notebook # notebook | report | both\n    14\tdelivery: staged      # staged (dag first, default) | full (everything at once, they asked)\n    15\trun_here: false       # true = we execute it; only possible for sample or simulated\n    16\tdag_tested: no        # no | yes | failed — nothing gets promoted while this reads \"no\"\n    17\t\n    18\tskills_used: []\n    19\tmethods: []                 # [\"[[measuring-marketing-incrementality]]\"] — standing methods used\n    20\texperiments_used: []        # [\"[[2025-q3-winback-holdout]]\"] — where any prior came from\n    21\t---\n    22\t\n    23\t## What was asked\n    24\tVerbatim, and what decision hangs on it.\n    25\t\n    26\t## Verdict\n    27\tIdentified / not identified, and why. If not identified: what would work instead.\n    28\t\n    29\t## Events in this window\n    30\t- [[2026-03-price-uplift]] — the treatment itself\n    31\t- [[2026-02-billing-migration]] — threat: overlaps the pre-period\n    32\t\n    33\t## What we found\n    34\t\n    35\t## What we learned\n    36\t(goes into the wiki, not just here)\n    37\t\n    38\t## Outcome log\n    39\tDated, append-only. Everything that arrives about this question lands here in order — the\n    40\tresult, what stakeholders decided, and whatever contradicts it three months later. Never\n    41\toverwrite an entry; a record that quietly updates itself cannot be audited.\n    42\t\n    43\t- 2026-04-18 — notebook returned, estimate 2.1pp (95% CI 0.4–3.8). {q:q-0042}\n    44\t- 2026-05-02 — pricing team decided not to roll back; wanted the CATE by tenure first.\n    45\t- 2026-07-11 — Q2 holdout put it at 0.9pp. Ours was high; the pre-period overlapped the\n    46\t  billing migration after all. Trap written: [[did-with-contaminated-pre-period]].\n    47\t"
+    }
+   ]
+  },
+  {
+   "role": "assistant",
+   "content": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01NEQHdjbabpDvzAUTmVTAp1",
+     "name": "write_file",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "file_path": "wiki/questions/q-0001/q-0001.md",
+      "content": "---\nid: q-0001\ntext: \"in relation to the change in price configuration for pwa in august 2026, no random experiments were conducted, how can i estimate the impact of the change in terms of booking volume?\"\naliases: [\"the PWA price change\", \"the August conversion rate flip\", \"the Avios discount ladder flip\", \"the pwa booking volume question\"]\nopened: 2026-09-07\nstate: interviewing\nwindow: null\noutcome: bookings\ntreatment: pwa_discount_tier_conversion_rate\ngraph: pwa-pricing\n\ndata_mode: null       # live | sample | simulated — decides what any number here is worth\ndeliverable: null     # notebook | report | both\ndelivery: staged      # staged (dag first, default) | full (everything at once, they asked)\nrun_here: false\ndag_tested: no\n\nskills_used: []\nmethods: []\nexperiments_used: [\"[[2026-08-conversion-rate-flip]]\"]\n---\n\n## What was asked\nVerbatim:\n\n> in relation to the change in price configuration for pwa in august 2026, no random\n> experiments were conducted, how can i estimate the impact of the change in terms of\n> booking volume?\n\n## Verdict\n(pending interview and review)\n\n## Events in this window\n- [[2026-08-conversion-rate-flip-experiment]] — the treatment itself: the discount-tier /\n  conversion-rate mapping inverted 2026-08-01 to 2026-08-14, applied to all members and\n  routes but **only for departures within 2026**.\n- Unnamed 2025 change — contaminates August 2025, so the year-on-year DiD is known biased.\n  {source: raw/pwa_exp}\n\n## What we found\n\n## What we learned\n\n## Outcome log\n- 2026-09-07 — question opened. {q:q-0001 on:2026-09-07}\n"
+     }
+    }
+   ]
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_01NEQHdjbabpDvzAUTmVTAp1",
+     "content": "Created wiki/questions/q-0001/q-0001.md (commit 13cb816)"
+    }
+   ]
+  },
+  {
+   "role": "assistant",
+   "content": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01SSRSC4kHTtmkPjRy2iXQXQ",
+     "name": "edit_file",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "file_path": "wiki/questions/INDEX.md",
+      "old_string": "|     |                |             |       |         |",
+      "new_string": "| q-0001 | How to estimate the booking-volume impact of the Aug 2026 PWA price/conversion-rate change, with no randomisation | \"the PWA price change\", \"the August conversion rate flip\", \"the Avios discount ladder flip\" | interviewing | — |"
+     }
+    }
+   ]
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_01SSRSC4kHTtmkPjRy2iXQXQ",
+     "content": "The file wiki/questions/INDEX.md has been updated (commit 321f89c). Here's the result of running `cat -n` on a snippet of the edited file:\n"
+    }
+   ]
+  },
+  {
+   "role": "assistant",
+   "content": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01S1q49LDEX4YmRVCzJHRqhA",
+     "name": "load_skill",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "name": "running-an-interview"
+     }
+    }
+   ]
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_01S1q49LDEX4YmRVCzJHRqhA",
+     "content": "# Skill: running-an-interview (trusted) — .claude/skills/running-an-interview/SKILL.md\n\n---\nname: running-an-interview\ndescription: Conduct the interview that turns a business question into a well-posed causal question and a drawn graph. Use at the start of every new question.\n---\n\n# Running an interview\n\nThis is where the value is. Everything else is bookkeeping.\n\nDelegate to the `interviewer` subagent, which has the full ladder. This skill is the\nshort form for when you are running it directly.\n\n## Open by showing you already know\n\nRead `wiki/README.md`, then grep the wiki for every noun in the question. Read what\ncomes back — concepts, events, processes, experiments, traps. Read\n`wiki/questions/INDEX.md`; we may have answered this.\n\n**Then walk the graph, which is the half that gets skipped.** Grep finds pages using the\nanalyst's words. It does not find the node we called something else, and it does not find\nstructure. So read every file in `wiki/concepts/` — it is small enough that reading it is\nthe search — and work out, before you speak:\n\n- **What already causes the outcome.** Its `## Caused by` is every cause this company has\n  already confirmed.\n- **What the treatment already causes**, and what causes it — the assignment rule is often\n  already recorded from an earlier question.\n- **What is an ancestor of both.** That is an **already-established confounder**. State\n  it; do not ask about it.\n- **`observed:` and `measured_at:` on every node on those paths.** The most expensive\n  answers to get out of an analyst, already written down. If an `observed: false` node\n  already sits on an unblockable backdoor path, you may be able to reach the refusal\n  before the first question — do it.\n- **`graphs:`** — join the named area we already have rather than starting a parallel one.\n\nThen open with the subgraph, not with the fact that you read it. *\"We already have\n`churn_30d` with three confirmed causes, one unobserved. Two of my questions are already\nanswered. The one thing the graph doesn't settle is…\"*\n\n**Never ask what the wiki or the graph already answers.** It is the fastest way this stops\nfeeling worth using, and it is the most likely way it degrades.\n\n**Every fact the graph already holds is a question you do not have to spend** — which is\nwhat makes the budget below reachable, and why the twentieth question here should cost a\nfraction of the first.\n\nReuse the graph, but do not treat it as gospel: an edge with no `{by:... on:...}` span was\nnever confirmed by anyone, and a confirmed edge can go stale. If one looks wrong for this\nquestion, say so and ask — never silently reverse it.\n\n## Order\n\nOutcome → population and window → **data mode** → **events and past experiments** →\nassignment mechanism → graph → observability → timing → deliverable and delivery.\n\nPin the window before you look for events. Then grep `wiki/events/` for everything\noverlapping it and show me **all of it**, unfiltered. Do not decide what is relevant —\nthe whole point is catching the one nobody remembered, and filtering defeats it.\n\nThen grep `wiki/experiments/` for the outcome and for anything that looks like the\ntreatment. A past experiment is the strongest thing you can carry into an interview: a\nprior to anchor rather than fit, a CATE saying where the effect is not homogeneous, and\na number the new estimate will have to be reconciled against. Show me those too, and say\nwhich of their priors you intend to use.\n\nAssignment mechanism is the highest-yield question in the interview. *Who got treated\nand why?* The rule that decides who gets treated **is** the confounding.\n\n## Data mode — ask it early, it is one question\n\n*\"When it comes to running this: is the data live in your environment, can you give me an\nextract, or is there nothing yet and you want me to simulate it?\"*\n\n| `data_mode` | what it is | what a number from it is worth |\n|---|---|---|\n| `live` | runs against the real system where the analyst sits | an estimate about the company |\n| `sample` | an extract they hand over — CSV, parquet, fixture | an estimate about **that extract**; the company only if it is the population or a documented random draw |\n| `simulated` | nothing yet; generated from the graph | **nothing about the company, ever** — it tests that the code runs and that the estimator recovers a planted effect |\n\nIt is asked early because it changes what the rest of the ladder means. Under\n`simulated`, `observed: true/false` is a design choice rather than a fact, and must be\nmarked as one. Under `live`, find out what the system is — and if there is no access\nskill for it, that is `technician`'s job, not something to improvise in a notebook. Under\n`sample`, ask where the extract came from and how it was filtered; a sample nobody can\ndescribe is a sample nobody should estimate from.\n\n**Only `live` — or a `sample` documented as the whole population — can produce a\n`wiki/experiments/` prior.** That gate is what keeps synthetic numbers out of the\nknowledge base, and it matters more than it sounds: a simulated effect size that leaks\ninto `experiments/` will be read a year later as something we measured.\n\n## The deliverable — not everything is a notebook\n\nAsk before assuming. *\"Do you want code you run, or a written argument you and your\nstakeholders decide on?\"*\n\n- **`notebook`** — there is a dataset and an estimate to make.\n- **`report`** — a test design, a measurement recommendation, a refusal with the design\n  that would work. These are read and decided on, not executed. They go to\n  `wiki/questions/<qid>/report.md` via the `writing-reports` skill, and if approved they\n  become a standing method.\n- **`both`** — a design that also needs a power calculation or a simulation behind it.\n\nThen: `staged` (DAG notebook first — the default, and the reason this system works) or\n`full` (everything in one pass because they asked). Offer `full` honestly, including what\nit costs, and do not argue past a clear answer. If they want it run **here** on a sample\nor simulation, do that — and still write the `.ipynb`, every time.\n\n## The interview has a budget\n\n**Checkpoint at the third exchange, and every third one after.** On a count, not on a\nfeeling. Three routes, one short message: **proceed** (with the gap named), **keep going**\n(with the next question and what it would change), or **park it**. Recommend one.\n\n**Never ask a question whose answer would not change the graph, the verdict or the\nnotebook.** The target is a graph good enough to *test*, not one nobody could fault — the\nnotebook is better at finding what the interview missed than a fourth round of questions.\n\n## How to ask\n\nAsk what only I know. You read faster than I can recite; spend my attention on what is\nnot written down.\n\nConfounders by mechanism, never by name — nobody answers \"what confounds this?\" well:\n\n- \"What else changed for the people who got this?\"\n- \"If I sorted customers by tenure, would the treated ones look different?\"\n- \"Who decided which customers got it?\"\n- \"What would make you doubt this result?\"\n\nOne question at a time.\n\n## When the question has no dataset\n\n\"How should we measure incrementality?\" \"How do we prove MMM is worth it?\" \"A/B test or\na bandit?\" These are methodology questions. Same loop — read first, interview,\n`reviewer` — but the output is a page in `wiki/methods/`, not a graph.\n\n`scholar` is not only for these. Pull it into any interview where a design choice is\nlive — which estimator, whether an event is usable as a natural experiment, whether a\ntest is powered. It is an expert in causal inference and experiment design and it has\nread our library; treat it as a colleague in the room, and relay its `[lib]`/`[bg]`\nmarkers to me rather than flattening them.\n\n**Ask `scholar` before you answer one.** It reads `wiki/literature/` — the papers,\nlibrary docs and other companies' write-ups we have ingested — and separates what is\ncited from what it is merely recalling. On a methodology question that separation is the\nanswer: \"the field does X\" carries weight when it is `[lib]` with a file name and much\nless when it is `[bg]`.\n\n**Read `wiki/methods/` before answering one.** If a standing method already covers it,\nthe answer *is* that method, and the conversation is only about whether this case is an\nexception to it. Re-deriving from scratch what the company settled last year is the same\nfailure as asking what the wiki already answers.\n\nIf nothing covers it, the output is a new method page: what business actually asks, what\nwe do here, when it does not apply, what it costs, what it assumes, and the artefacts —\nnotebooks or write-ups — that came out of it. Link every question that used it.\n\n**Never establish a standing method alone.** It binds every future question, so it is\nproposed, reviewed and confirmed exactly like an edge.\n\n## Write as you go\n\nConcepts, edges, events, table notes — into the wiki during the conversation, not after.\nA question that ends with a clean answer and an unchanged wiki was a wasted question.\n\nAnything dateable becomes an event page immediately, even if this question does not need\nit. Cheap to record now, expensive to reconstruct in a year.\n\n## Stop\n\nWhen the graph is complete enough for `reviewer` to judge identification. Early, if an\nunobserved node already makes it unanswerable — get to the refusal, it is the useful\noutput. Or at a checkpoint, when the analyst says proceed. Their call.\n\nWrite `data_mode`, `deliverable`, `delivery`, `run_here` and `dag_tested` into the\nquestion frontmatter before you hand off. Everything downstream reads them.\n\nThen hand to `reviewer`. Always, before the *analysis* notebook — and for a `report`\ndeliverable too; a design gets an independent read exactly like a graph does.\n\n`dag.ipynb` does not wait for the reviewer. The moment the edges are confirmed, write it\n— build, falsify, fit, inspect — and give it to the analyst to run. The reviewer judges\nthe graph on paper; the notebook judges it against data. They catch different things.\nSee `writing-notebooks`.\n\nUnder `delivery: full` the analysis notebook goes out alongside it, unreviewed and\nuntested, because the analyst asked for the whole thing. That is allowed. What is not\nallowed is letting anything out of it into the wiki while `dag_tested: no`.\n"
+    }
+   ]
+  },
+  {
+   "role": "assistant",
+   "content": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Pb11anQ8tmqe5U8QeY98cR",
+     "name": "invoke_subagent",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "agent": "interviewer",
+      "task": "Run the interview for a newly opened question.\n\nQuestion id: q-0001. Record: wiki/questions/q-0001/q-0001.md (already created, state: interviewing).\nIndex entry already added.\n\nVerbatim question from the analyst:\n\"in relation to the change in price configuration for pwa in august 2026, no random experiments were conducted, how can i estimate the impact of the change in terms of booking volume?\"\n\nRepository state you should read before speaking:\n- wiki/README.md\n- wiki/processes/pay-with-avios-ba-holidays.md\n- wiki/processes/iagl-pwa-metrics.md\n- wiki/events/2026-08-conversion-rate-flip-experiment.md\n- wiki/experiments/2026-08-conversion-rate-flip.md\n- wiki/questions/INDEX.md (q-0001 is the only question)\n- .claude/SKILLS.md (no skills exist yet — no access skill, so live data would need `technician`)\n- wiki/concepts/ is EMPTY — no nodes, no edges drawn yet. This is the first graph.\n- raw/pwa_exp exists as the ingested source.\n\nYour job: open by showing what the wiki already establishes (don't ask what it answers), settle outcome / population / window / data_mode / events / assignment mechanism / graph / observability / timing / deliverable / delivery, and draw the graph into wiki/concepts/ as edges are confirmed (use the drawing-the-dag skill). Note the recorded observability limit: non-member and non-Avios BA Holidays bookings are invisible, so total booking volume is not observable — only Avios-redeeming bookings. That is central and should shape your first questions rather than be discovered late.\n\nAsk ONE question per turn. End your turn with the exact question you want relayed to the analyst, plus 2-4 concrete answer options I can show as buttons. I will relay it verbatim and return the analyst's answer via resume. Today is 2026-09-07; the analyst is \"analyst\"."
+     }
+    }
+   ]
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_01Pb11anQ8tmqe5U8QeY98cR",
+     "content": "I've read everything the wiki holds on this. Here is what it already settles, so I don't spend your time re-asking it:\n\n**Already established (no need to confirm):**\n- **Treatment**: the discount-tier → conversion-rate mapping was *inverted* 1–14 Aug 2026 — max discount got the most favourable rate (0.01), min discount the least (0.004). Normally it runs the other way.\n- **Assignment rule**: no A/B split. It applied to **all** members and routes, but **only to bookings with a departure date inside 2026**. Departures 2027+ kept the standard ladder. That is the one and only untreated comparison group in existence.\n- **Known dead end**: the year-on-year DiD (Aug 2025 as counterfactual) is already recorded as **biased** — Aug 2025 was contaminated by a separate 2025 change that the source never names or dates.\n- **Observability limit**: non-member BA Holidays bookings are invisible to IAGL. So \"total booking volume\" is not an observable outcome. That is not a detail — it decides what question is even askable.\n- **No prior effect estimate exists**: `wiki/experiments/2026-08-conversion-rate-flip.md` deliberately records *no* readout, so nothing from that window can be quoted as an effect.\n- **No skills exist yet** — so if the data is live in your warehouse, connecting to it is a piece of work for `technician`, not something I can assume.\n\n`wiki/concepts/` is empty — this will be the first graph drawn here, under `graph: pwa-pricing`.\n\nThere is one **contradiction in the source** I have to resolve before anything else, because it changes what \"booking volume\" can even mean. The raw note says you see *\"all members logged-in activities, search and booking\"* — which implies member bookings made **without** Avios are visible. But the metrics page reads as if only Avios-redeeming bookings are countable. These are very different worlds: if member non-Avios bookings are visible, we can tell **incremental bookings** apart from **members simply switching into redeeming**. If they aren't, the flip's effect and a pure mix-shift are indistinguishable in the outcome.\n\n---\n\n**QUESTION FOR THE ANALYST:**\n\n> For a logged-in BA Holidays member who books a holiday but **does not** redeem any Avios — can you see that booking in your data?\n\n**Options:**\n1. **Yes — I can see all member bookings, with or without Avios redemption.** (So member bookings is a usable outcome, and Avios-redeeming bookings is a sub-set of it.)\n2. **No — I only see a booking when Avios are redeemed.** (Avios-redeeming bookings is the only outcome available.)\n3. **I can see member *searches* regardless, but only *bookings* when Avios are redeemed.** (Search volume is available as a separate, upstream measure.)\n4. **Partly / I'm not sure — I'd need to check.**"
+    }
+   ]
+  },
+  {
+   "role": "assistant",
+   "content": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAISgAIKjgEIERgCKkCBqejodGMSvDUx+XSfWsRQknKRp/hNbPIEbnBA0/u04LDCCt3f5VTi34rEHONH3Tf8Ahr33OHf4dRMm16fFuVPMg1jbGF1ZGUtb3B1cy01OAFCCHRoaW5raW5nWiQwNjU0YzEzNC0wNTU4LTRhOWQtYjRkNi1mMjRjZjY2ZjdmOGaoAeLt+9QGEgySnK7mpwlsT1TUxqAaDPYXzroe8iJRMmHeiSIwCeYlx53jjDBNaT/0CMElX5KJtsAQuH7psGe0fr4s+DSoH2cOZjSGnS8KNOBB0GgcKh+OFH7K0oVWOBMPdCbxhXwRvGb8hz9Vf42aP3fSb1pWGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_011p48hLKAGDA7jmypmKU52b",
+     "name": "ask_analyst",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "questions": [
+       {
+        "header": "Visibility",
+        "question": "For a logged-in BA Holidays member who books a holiday but **does not** redeem any Avios — can you see that booking in your data?",
+        "options": [
+         {
+          "label": "Yes, all member bookings",
+          "description": "I can see all member bookings, with or without Avios redemption. So member bookings is a usable outcome, and Avios-redeeming bookings is a subset of it."
+         },
+         {
+          "label": "No, only Avios redemptions",
+          "description": "I only see a booking when Avios are redeemed. Avios-redeeming bookings is the only outcome available."
+         },
+         {
+          "label": "Searches yes, bookings no",
+          "description": "I can see member searches regardless, but only bookings when Avios are redeemed. Search volume is available as a separate, upstream measure."
+         },
+         {
+          "label": "Partly / need to check",
+          "description": "I'm not sure and would need to check."
+         }
+        ]
+       }
+      ]
+     }
+    }
+   ]
+  }
+ ],
+ "agents": {
+  "interviewer": [
+   {
+    "role": "user",
+    "content": "Run the interview for a newly opened question.\n\nQuestion id: q-0001. Record: wiki/questions/q-0001/q-0001.md (already created, state: interviewing).\nIndex entry already added.\n\nVerbatim question from the analyst:\n\"in relation to the change in price configuration for pwa in august 2026, no random experiments were conducted, how can i estimate the impact of the change in terms of booking volume?\"\n\nRepository state you should read before speaking:\n- wiki/README.md\n- wiki/processes/pay-with-avios-ba-holidays.md\n- wiki/processes/iagl-pwa-metrics.md\n- wiki/events/2026-08-conversion-rate-flip-experiment.md\n- wiki/experiments/2026-08-conversion-rate-flip.md\n- wiki/questions/INDEX.md (q-0001 is the only question)\n- .claude/SKILLS.md (no skills exist yet — no access skill, so live data would need `technician`)\n- wiki/concepts/ is EMPTY — no nodes, no edges drawn yet. This is the first graph.\n- raw/pwa_exp exists as the ingested source.\n\nYour job: open by showing what the wiki already establishes (don't ask what it answers), settle outcome / population / window / data_mode / events / assignment mechanism / graph / observability / timing / deliverable / delivery, and draw the graph into wiki/concepts/ as edges are confirmed (use the drawing-the-dag skill). Note the recorded observability limit: non-member and non-Avios BA Holidays bookings are invisible, so total booking volume is not observable — only Avios-redeeming bookings. That is central and should shape your first questions rather than be discovered late.\n\nAsk ONE question per turn. End your turn with the exact question you want relayed to the analyst, plus 2-4 concrete answer options I can show as buttons. I will relay it verbatim and return the analyst's answer via resume. Today is 2026-09-07; the analyst is \"analyst\"."
+   },
+   {
+    "role": "assistant",
+    "content": [
+     {
+      "type": "text",
+      "text": "I'll read the repository state first."
+     },
+     {
+      "type": "tool_use",
+      "id": "toolu_01Cjop2rSicooFDe6PN2t9jJ",
+      "name": "read_file",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "file_path": "wiki/README.md"
+      }
+     },
+     {
+      "type": "tool_use",
+      "id": "toolu_01EocSwWp4GGToTKijBeKNWc",
+      "name": "read_file",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "file_path": "wiki/processes/pay-with-avios-ba-holidays.md"
+      }
+     }
+    ]
+   },
+   {
+    "role": "user",
+    "content": [
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_01Cjop2rSicooFDe6PN2t9jJ",
+      "content": "     1\t# The wiki\n     2\t\n     3\tEverything true about this company, in markdown. Read this file first, every session.\n     4\t\n     5\t## This is one half of the system\n     6\t\n     7\t`wiki/` is **what is true about this company** — the graph, the tables, the events, what\n     8\twe have already measured, what we have read.\n     9\t\n    10\t`.claude/skills/` is **what we have learned to do here** — connecting to the warehouse,\n    11\tthe estimator that works when a display rule rather than randomisation decides exposure,\n    12\thow a result gets written up so people here act on it. The inventory is\n    13\t`.claude/SKILLS.md`, and it says how a skill earns its way from staging into trusted.\n    14\t\n    15\tNeither was written in advance. **Both accumulate from real questions, and they\n    16\taccumulate together**: a question adds facts to the wiki and, when the work was genuinely\n    17\tnovel, a procedure to the skills. A question that leaves both unchanged was a wasted\n    18\tquestion.\n    19\t\n    20\t| Folder | What lives there | Written when |\n    21\t|---|---|---|\n    22\t| `concepts/` | **The causal graph.** One file per variable. | During interviews |\n    23\t| `tables/` | Semantic layer: tables, columns, grains, joins, filters, gotchas | Ingest |\n    24\t| `events/` | What the company changed, and when | Interviews and ingest |\n    25\t| `processes/` | How the business actually works, in prose | Ingest and interviews |\n    26\t| `experiments/` | Past tests, what they found, **and the priors they hand you** | Ingest and close |\n    27\t| `methods/` | **How we measure things here.** Standing methodology, reviewed | When a methodology question is settled |\n    28\t| `literature/` | **What the field says.** Papers, library docs, other companies | Ingest |\n    29\t| `traps/` | Mistakes that keep happening here | After questions |\n    30\t| `questions/` | One folder per question: record, notebook or report, result | The whole lifecycle |\n    31\t| `questions/INDEX.md` | **One line per question. The entry point.** | At ask, and at close |\n    32\t\n    33\tTemplates for each are in `_templates/`.\n    34\t\n    35\t## Finding a question again a month later\n    36\t\n    37\tNobody says \"q-0042\" out loud. They say \"that Avios thing\", or \"what Priya asked before\n    38\tthe offsite\". Three mechanisms, all cheap, and they only work if they are kept up:\n    39\t\n    40\t1. **`questions/INDEX.md`** — one line each, and a single file read. Look here first,\n    41\t   before assuming a question is new.\n    42\t2. **`aliases:` in the question frontmatter** — the words people actually use, written the\n    43\t   way they say them. This is what makes grep work later.\n    44\t3. **`{q:q-0042 on:2026-09-06}` on anything a question wrote** — the same visible span the\n    45\t   graph uses for edges. One convention, both jobs.\n    46\t\n    47\tAnd when something arrives after the fact — the test ran, the stakeholders decided, the\n    48\testimate turned out wrong — it goes into that question's `## Outcome log`, dated,\n    49\tappend-only, via `/cb_outcome`. **A concluded question is not closed to evidence.**\n    50\t\n    51\t## The graph\n    52\t\n    53\tOne markdown file per variable in `concepts/`. The headings carry direction and kind —\n    54\tObsidian's graph view has neither, so the structure has to.\n    55\t\n    56\t- `## Caused by` — incoming causal edge\n    57\t- `## Causes` — outgoing causal edge\n    58\t- `## Computed from` — **arithmetic only**, never causal\n    59\t\n    60\tAn edge may be declared from either end. Each bullet is a wikilink, one line of\n    61\treasoning, and a `{by:... on:...}` span recording who confirmed it. No span means\n    62\tnobody has confirmed it yet.\n    63\t\n    64\t`measured_at` in the frontmatter is the most valuable field in the wiki. It is what\n    65\tstops a mediator being used as a control, and no semantic layer records it.\n    66\t\n    67\t## Concepts vs columns\n    68\t\n    69\tA **concept** is a causal variable and gets a node file. A **column** is one physical\n    70\tplace it is stored and lives on a table page. Many columns, one concept.\n    71\t\n    72\tMerge two columns into one concept only if a causal claim about one is a causal claim\n    73\tabout the other: same quantity, same grain, same timing. `churn_30d` and `churn_90d`\n    74\tare two concepts, not one — different timing, and they can sit on opposite ends of the\n    75\tsame edge.\n    76\t\n    77\t**Do not create a concept for every column.** A column becomes a concept when a\n    78\tquestion needs it in a graph. Most never will.\n    79\t\n    80\t## Named graphs\n    81\t\n    82\t`graphs: [pricing, retention]` in the frontmatter. A company has many loosely-connected\n    83\tcausal areas and one big graph is unreadable. Membership is declared in the node, never\n    84\tin a separate list, so nothing can fall out of sync.\n    85\t\n    86\t## Methods and experiments get read *before* the graph\n    87\t\n    88\tTwo folders answer questions that are not about any one dataset.\n    89\t\n    90\t`methods/` is the company's standing answer to \"how should we measure this?\" —\n    91\tincrementality, holdout design, when a contextual bandit beats a fixed A/B test, what\n    92\tMMM is and is not good for. Some have a notebook behind them, some are a white paper,\n    93\tsome are one hard-won paragraph. Every page carries `tags: [method]` and lists the\n    94\tquestions that used it, so a technique and the artefacts built with it stay linked in\n    95\tboth directions.\n    96\t\n    97\tA method is **amended, never quietly replaced.** It binds every future question, so a\n    98\tchange to one is proposed, reviewed and confirmed the way a causal edge is.\n    99\t\n   100\tEvery method page carries **`evidence:`** as well as `status:`, and they are different\n   101\tclaims. `status: established` means everyone here follows it. `evidence: none-yet` means\n   102\tnothing has tested it — the honest and common state for a design that stakeholders\n   103\tapproved before it ran. Such a method binds future questions **as a convention, not as a\n   104\tfinding**, and says so on its face. When something finally runs, the page is amended and\n   105\t`evidence:` moves to `ran-once`, then `replicated`. A design that turned out wrong is\n   106\tamended too, and that amendment is worth more than the original page.\n   107\t\n   108\t`literature/` is everything read from outside: DoWhy or Meridian documentation, a paper\n   109\tworth keeping, a blog post from a company with our problem. Each page records the claim\n   110\t*stated precisely enough to be wrong*, what it assumes, what it does **not** cover, and a\n   111\ttrust level with a reason. The `scholar` agent reads this folder before answering\n   112\tanything methodological, and it marks its own claims `[lib]` or `[bg]` so a citation is\n   113\tnever confused with a recollection.\n   114\t\n   115\t`experiments/` is what we have already measured. Read it before designing anything. A\n   116\trandomised estimate is a **prior**: fitting a parameter freely when an experiment\n   117\talready measured it throws away the best evidence in the building. This is the whole\n   118\treason the folder exists — asked for an MMM, the channel priors should come from the\n   119\tgeo tests and holdouts recorded here, not from a default.\n   120\t\n   121\t## Seeing the graph in Obsidian\n   122\t\n   123\tEvery file in `concepts/` carries `tags: [dag]`. **Nothing else in the wiki carries it.**\n   124\tThat single tag is the whole mechanism: type `tag:#dag` into the graph view's search box\n   125\tand the tables, events, processes and question records drop away, leaving the causal\n   126\tgraph on its own.\n   127\t\n   128\t`wiki/methods/` carries `tags: [method]` and `wiki/literature/` carries\n   129\t`tags: [literature]`, on the same principle. Swap the search box to `tag:#method` for the\n   130\tmethodology layer or `tag:#literature` for what we have read.\n   131\t\n   132\t**Three tags, three layers: what is true here, how we measure it, what the field says.**\n   133\tStop there. The headings already carry direction and kind, and a fourth tag vocabulary\n   134\tthat duplicates them will drift out of sync with them.\n   135\t\n   136\t## Finding things\n   137\t\n   138\tGrep. `rg \"churn\" wiki/`, `rg \"measured_at: post_treatment\" wiki/concepts/`,\n   139\t`rg -l \"pricing\" wiki/concepts/`. The wiki is small enough that search is reading.\n   140\t"
+     },
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_01EocSwWp4GGToTKijBeKNWc",
+      "content": "     1\t# Pay with Avios — BA Holidays\n     2\t\n     3\tHow the product works, as described by the analyst. Facts only; causal claims found in\n     4\tthe source are quarantined at the bottom of this page as attributed prose.\n     5\t\n     6\tSource: `raw/pwa_exp` (same text previously ingested as `raw/iagl_pwa`),\n     7\trecorded_by: analyst, recorded_on: 2026-09-07.\n     8\t\n     9\t## The company and the product\n    10\t\n    11\tIAG Loyalty (IAGL) is the company behind the **Avios** loyalty currency. One of its\n    12\tproducts is **Pay with Avios (PWA) for BA Holidays**: when a member is booking a holiday\n    13\tthey can redeem some of their Avios for a discount on the holiday ticket.\n    14\t\n    15\tBA Holidays is now part of IAGL. BA Holidays' own margin on a booking is **10% of the\n    16\tticket price**. {source: raw/pwa_exp}\n    17\t\n    18\t## The discount ladder\n    19\t\n    20\tAt booking the member is presented with **up to 9 discount options**. Each option is:\n    21\t\n    22\t- a **percentage of the ticket price** taken as discount, and\n    23\t- an **Avios-to-cash conversion rate** attached to that discount tier.\n    24\t\n    25\tThe conversion rate ranges from **0.01** (most favourable to the member — each Avios buys\n    26\tmore discount) down to **0.004** (least favourable).\n    27\t\n    28\tUnder normal policy the ladder is **penalising**: the higher the discount tier, the worse\n    29\tthe conversion rate. That mapping was inverted for two weeks in August 2026 — see\n    30\t[[2026-08-conversion-rate-flip-experiment]].\n    31\t\n    32\t## Key business metrics\n    33\t\n    34\tDefined on the source's own words; see [[iagl-pwa-metrics]] for the formulas.\n    35\t\n    36\t- Number of bookings made using the product\n    37\t- Avios redeemed\n    38\t- Cash (cash paid on the booking)\n    39\t- Cost per Avios = sum of cash in the window ÷ sum of Avios in the window\n    40\t\n    41\t## What is and is not observable\n    42\t\n    43\t**This is the central data limitation of the product.**\n    44\t\n    45\t- Visible: all *logged-in member* activity — searches and bookings.\n    46\t- **Not visible: BA Holidays booking volume independent of Avios use.** Non-member\n    47\t  bookings are hidden from IAGL. {source: raw/pwa_exp}\n    48\t\n    49\tSo the denominator \"all BA Holidays bookings\" does not exist in our data. Any metric\n    50\tphrased as a *share* of total BA Holidays bookings is not computable as stated, and any\n    51\tdesign that needs untreated non-member bookings as a control group is unavailable.\n    52\t\n    53\t## Causal claims made in the source (attributed, not edges)\n    54\t\n    55\tThese are the business's model of the product. They are **not** drawn in\n    56\t`wiki/concepts/` — edges are only drawn in an interview where the analyst confirms them.\n    57\t\n    58\t- The August 2026 experiment rationale argued that a **more attractive conversion rate on\n    59\t  the high-discount tiers would drive more bookings**, and that the extra volume — counted\n    60\t  against the *combined* IAGL + BA Holidays margin — would keep overall margin high\n    61\t  despite a higher short-run redemption cost. {source: raw/pwa_exp}\n    62\t- The source describes marginal margin as \"usually very small\", because cost per Avios\n    63\t  typically sits around **0.005** against an Avios value of 0.00659. {source: raw/pwa_exp}\n    64\t"
+     }
+    ]
+   },
+   {
+    "role": "assistant",
+    "content": [
+     {
+      "type": "tool_use",
+      "id": "toolu_01Pm9fPS2iP2RmpH82Q6M8H5",
+      "name": "read_file",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "file_path": "wiki/processes/iagl-pwa-metrics.md"
+      }
+     },
+     {
+      "type": "tool_use",
+      "id": "toolu_01Ug2fFPeqBkaWcX2VSXEeJ6",
+      "name": "read_file",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "file_path": "wiki/events/2026-08-conversion-rate-flip-experiment.md"
+      }
+     },
+     {
+      "type": "tool_use",
+      "id": "toolu_017g7jHnddKQYSam97DCDp2a",
+      "name": "read_file",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "file_path": "wiki/experiments/2026-08-conversion-rate-flip.md"
+      }
+     }
+    ]
+   },
+   {
+    "role": "user",
+    "content": [
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_01Pm9fPS2iP2RmpH82Q6M8H5",
+      "content": "     1\t# IAGL Pay-with-Avios metric definitions\n     2\t\n     3\tDefinitions exactly as given by the analyst. Source: `raw/pwa_exp`, recorded_by: analyst,\n     4\trecorded_on: 2026-09-07.\n     5\t\n     6\tThese are **arithmetic identities**, not causal statements. If any of these quantities\n     7\tbecomes a node in a graph, the relationship between it and its inputs belongs under\n     8\t`## Computed from`, never `## Caused by`.\n     9\t\n    10\t## Cost per Avios (CPA)\n    11\t\n    12\t    cost_per_avios = sum(cash in window) / sum(avios in window)\n    13\t\n    14\tTypical observed level: **around 0.005**. {source: raw/pwa_exp}\n    15\t\n    16\tNote the window dependence: CPA is a ratio of two sums over a chosen period, not a\n    17\tper-booking average. Changing the window changes the number.\n    18\t\n    19\t## IAGL margin\n    20\t\n    21\t    iagl_margin = sum(avios redeemed in period) * 0.00659 - sum(cash in period)\n    22\t\n    23\t0.00659 is the internal value placed on one Avios. Because CPA is usually ~0.005 against\n    24\ta 0.00659 valuation, the marginal margin per redemption is small.\n    25\t\n    26\t## Combined IAGL + BA Holidays margin\n    27\t\n    28\tBA Holidays is part of IAGL and takes **10% of the ticket price** as its own margin. The\n    29\tAugust 2026 experiment was justified on a *combined* margin basis:\n    30\t\n    31\t    combined_margin = iagl_margin + 0.10 * sum(ticket price in period)\n    32\t\n    33\tThis combined formula is the one the experiment's business case rested on. It is recorded\n    34\there as the definition used; whether it was the right basis is a question, not a fact.\n    35\t\n    36\t## Volume metrics\n    37\t\n    38\t- **Bookings made using the product** — bookings where Avios were redeemed. Bookings made\n    39\t  without Avios, and all non-member bookings, are not visible; see\n    40\t  [[pay-with-avios-ba-holidays]].\n    41\t- **Avios redeemed** and **cash** — the two components of every metric above.\n    42\t"
+     },
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_01Ug2fFPeqBkaWcX2VSXEeJ6",
+      "content": "     1\t---\n     2\tid: 2026-08-conversion-rate-flip-experiment\n     3\tdate_start: 2026-08-01\n     4\tdate_end: 2026-08-14        # \"first 2 weeks of August 2026\"\n     5\tannounced_on: null          # not stated in source — unknown, flagged below\n     6\ttouches: [pwa_discount_tier_conversion_rate, avios_redeemed, cash, bookings]\n     7\tvisible_in_data: partial    # policy is visible; a clean control group is not\n     8\tsource: raw/pwa_exp   # same text previously ingested under the path raw/iagl_pwa\n     9\trecorded_by: analyst\n    10\trecorded_on: 2026-09-06\n    11\treingested_on: 2026-09-07\n    12\t---\n    13\t\n    14\t## What changed\n    15\tThe mapping between discount tier and conversion rate was flipped for the two-week\n    16\twindow. Normally the **maximum discount** tier carries the **least favourable**\n    17\tconversion rate for the member (down to 0.004) and the **minimum discount** tier the\n    18\t**most favourable** (up to 0.01). During the experiment window this was inverted: the\n    19\tmax discount became the *most* favourable conversion rate, and the min discount the\n    20\t*least* favourable.\n    21\t\n    22\tRationale given: this was expected to be costly to IAGL/BA Holidays in the short run —\n    23\ttreated as an investment intended to drive more bookings and, via the combined IAGL + BA\n    24\tHolidays margin (BA Holidays keeps ~10% of ticket price on top of IAGL's Avios margin),\n    25\tkeep overall margin high despite the richer redemption terms.\n    26\t\n    27\t## Who it applied to\n    28\tAll members, all routes — but **only for bookings with a future departure date within\n    29\t2026**.\n    30\t\n    31\t## Who it did NOT apply to\n    32\tBookings with departure dates in 2027 or later kept the standard (non-flipped)\n    33\tconversion rate schedule. This is the only segmentation boundary recorded — there was no\n    34\tmember-level or route-level split.\n    35\t\n    36\t## Why it matters causally\n    37\tThis was **not a randomised A/B test** — there is no A/B split of members or bookings;\n    38\tthe policy applied uniformly to everyone booking a 2026 departure. The only exploitable\n    39\tboundary is the departure-date cutoff (within-2026 vs 2027+), which is a plausible\n    40\tregression-discontinuity/DiD-style comparison group, not a randomised control.\n    41\t\n    42\tAnnouncement timing is not stated in the source — unknown whether members anticipated\n    43\tthe change. Flagged as unclassified/unknown, see ingest summary.\n    44\t\n    45\t## Known threat to naive analysis\n    46\tA same-period-last-year (Aug 2025) DiD counterfactual was attempted and found to be\n    47\t**biased**: that period was contaminated by a separate, different change made last year.\n    48\tThe 2025 change is not named or dated in the source.\n    49\t\n    50\tSee [[2026-08-conversion-rate-flip]] in `wiki/experiments/` for the design and the\n    51\t(currently absent) readout, [[pay-with-avios-ba-holidays]] for how the product works, and\n    52\t[[iagl-pwa-metrics]] for the margin and cost-per-Avios formulas.\n    53\t"
+     },
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_017g7jHnddKQYSam97DCDp2a",
+      "content": "     1\t---\n     2\tid: 2026-08-conversion-rate-flip\n     3\tran: [2026-08-01, 2026-08-14]\n     4\tdesign: none — uncontrolled policy change to the whole population\n     5\tunit: booking (segmented only by departure date within/after 2026)\n     6\tgraph: null            # no graph drawn yet — no question has needed one\n     7\tmethods: []\n     8\tsource: raw/pwa_exp\n     9\tpriors: []             # DELIBERATELY EMPTY — no readout exists, see below\n    10\t---\n    11\t\n    12\t## What was tested\n    13\t\n    14\tFor the first two weeks of August 2026, the mapping between discount tier and Avios\n    15\tconversion rate on [[pay-with-avios-ba-holidays]] was **flipped**: the maximum discount\n    16\ttier carried the *most* favourable conversion rate (up to 0.01) and the minimum discount\n    17\ttier the *least* favourable (0.004). Normally the ladder runs the other way.\n    18\t\n    19\tThe change itself is recorded as an event:\n    20\t[[2026-08-conversion-rate-flip-experiment]].\n    21\t\n    22\t## Design\n    23\t\n    24\t**There was no A/B split.** The policy applied to all members and all routes. The only\n    25\tboundary is the booking's **departure date**: it applied to bookings with a departure\n    26\twithin 2026, and not to bookings departing 2027 or later. {source: raw/pwa_exp}\n    27\t\n    28\t## What it found\n    29\t\n    30\t**Nothing yet is recorded.** No readout is in the source material.\n    31\t\n    32\t## Why the obvious readout does not work\n    33\t\n    34\tA DiD against the same period last year (August 2025), with the month before as the\n    35\tpre-period, was attempted and is **biased**: August 2025 was heavily contaminated by a\n    36\tseparate change made in 2025. {source: raw/pwa_exp} That change is not named or dated in\n    37\tthe source — see the ingest summary.\n    38\t\n    39\t## Priors this gives you\n    40\t\n    41\t**None.** This page exists so that nobody treats \"we ran the flip in August 2026\" as\n    42\tevidence about the effect of the flip. The experiment ran; it has not been read out with\n    43\ta defensible counterfactual.\n    44\t\n    45\tWhat is *available* rather than measured: the departure-date boundary (within-2026 vs\n    46\t2027+) is the only untreated comparison group that exists in the data, and it is not\n    47\trandomised — bookings with far-future departures differ from near-term ones in ways that\n    48\tare plausibly related to both redemption behaviour and booking volume.\n    49\t\n    50\t## Do not reuse this if\n    51\t\n    52\tDo not quote any number from this window as an effect of the flip until a design has been\n    53\treviewed. Also note the visibility limit on the outcome: non-member and non-Avios BA\n    54\tHolidays bookings are invisible, so total booking volume is not observable — only\n    55\tAvios-redeeming bookings are.\n    56\t\n    57\t## Questions that used it\n    58\t\n    59\t- (none yet)\n    60\t"
+     }
+    ]
+   },
+   {
+    "role": "assistant",
+    "content": [
+     {
+      "type": "tool_use",
+      "id": "toolu_01As8MTJ1kHYAxe8SoVJfCps",
+      "name": "read_file",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "file_path": "wiki/questions/q-0001/q-0001.md"
+      }
+     },
+     {
+      "type": "tool_use",
+      "id": "toolu_01Tm38ucrQvmGQ5RThC6Z8FU",
+      "name": "read_file",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "file_path": ".claude/SKILLS.md"
+      }
+     }
+    ]
+   },
+   {
+    "role": "user",
+    "content": [
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_01As8MTJ1kHYAxe8SoVJfCps",
+      "content": "     1\t---\n     2\tid: q-0001\n     3\ttext: \"in relation to the change in price configuration for pwa in august 2026, no random experiments were conducted, how can i estimate the impact of the change in terms of booking volume?\"\n     4\taliases: [\"the PWA price change\", \"the August conversion rate flip\", \"the Avios discount ladder flip\", \"the pwa booking volume question\"]\n     5\topened: 2026-09-07\n     6\tstate: interviewing\n     7\twindow: null\n     8\toutcome: bookings\n     9\ttreatment: pwa_discount_tier_conversion_rate\n    10\tgraph: pwa-pricing\n    11\t\n    12\tdata_mode: null       # live | sample | simulated — decides what any number here is worth\n    13\tdeliverable: null     # notebook | report | both\n    14\tdelivery: staged      # staged (dag first, default) | full (everything at once, they asked)\n    15\trun_here: false\n    16\tdag_tested: no\n    17\t\n    18\tskills_used: []\n    19\tmethods: []\n    20\texperiments_used: [\"[[2026-08-conversion-rate-flip]]\"]\n    21\t---\n    22\t\n    23\t## What was asked\n    24\tVerbatim:\n    25\t\n    26\t> in relation to the change in price configuration for pwa in august 2026, no random\n    27\t> experiments were conducted, how can i estimate the impact of the change in terms of\n    28\t> booking volume?\n    29\t\n    30\t## Verdict\n    31\t(pending interview and review)\n    32\t\n    33\t## Events in this window\n    34\t- [[2026-08-conversion-rate-flip-experiment]] — the treatment itself: the discount-tier /\n    35\t  conversion-rate mapping inverted 2026-08-01 to 2026-08-14, applied to all members and\n    36\t  routes but **only for departures within 2026**.\n    37\t- Unnamed 2025 change — contaminates August 2025, so the year-on-year DiD is known biased.\n    38\t  {source: raw/pwa_exp}\n    39\t\n    40\t## What we found\n    41\t\n    42\t## What we learned\n    43\t\n    44\t## Outcome log\n    45\t- 2026-09-07 — question opened. {q:q-0001 on:2026-09-07}\n    46\t"
+     },
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_01Tm38ucrQvmGQ5RThC6Z8FU",
+      "content": "     1\t# What we can already do\n     2\t\n     3\tThe other half of this system. `wiki/` records **what is true about this company**; these\n     4\trecord **what we have learned to do here**. Neither was written in advance; both\n     5\taccumulate from real questions.\n     6\t\n     7\tOne line per skill. Updated when one is captured, used, or promoted — by `librarian` at\n     8\tclose, and by `technician` when it builds access.\n     9\t\n    10\t**Read this before opening a question.** What we can already do changes what is worth\n    11\tproposing: an existing warehouse connection makes `live` data cheap rather than a\n    12\tproject, and an existing estimator for a shape of problem that recurs here means the\n    13\tanalysis is mostly written already.\n    14\t\n    15\t| skill | kind | standing | used on | what it is for |\n    16\t|---|---|---|---|---|\n    17\t| *(example)* `snowflake-holdout-pull` | ACCESS | staging | q-0031 | assembling a treated/control table from the warehouse |\n    18\t| *(example)* `did-checkout-eligibility` | METHOD | trusted | q-0031, q-0044 | DiD where a display rule, not randomisation, decides exposure |\n    19\t\n    20\t## Kinds\n    21\t\n    22\t- **ACCESS** — reaching a system. Warehouse connections, API clients, export paths,\n    23\t  wherever a result has to land. `technician` owns these.\n    24\t- **METHOD** — how this company does a kind of causal analysis. The estimator that worked\n    25\t  for a problem shape that recurs here, what varies between instances of it, and what was\n    26\t  tried first that did not work.\n    27\t- **REPORTING** — how a result gets written up so people here actually act on it.\n    28\t\n    29\t## Standing\n    30\t\n    31\t- **staging** — `.claude/skills-staging/`. Captured from one question, unproven. Offered\n    32\t  when it looks relevant; never assumed.\n    33\t- **trusted** — `.claude/skills/`. Auto-loaded. It got there by being **used on more than\n    34\t  one question**, or by having its output **checked mechanically** — the notebook ran\n    35\t  clean and its assertions held.\n    36\t\n    37\t`skills_used:` in each question record is what makes the first bar measurable. If nobody\n    38\twrites it, nothing can ever be promoted on evidence, and this library stops growing.\n    39\t\n    40\t**Approval is not a promotion criterion.** Most company analytics is agreed with and\n    41\twrong. A system that promoted skills because stakeholders liked the output would get\n    42\tprogressively better at being persuasive here, which is the exact failure this whole\n    43\tthing exists to prevent.\n    44\t"
+     }
+    ]
+   },
+   {
+    "role": "assistant",
+    "content": [
+     {
+      "type": "thinking",
+      "thinking": "",
+      "signature": "CAISpAIKjgEIERgCKkCYd5hDmzY89587KZq21XJI6+M1rheGlvrGQ5THD7euHN1J1tQ7t28Y1Cel4e1rSQKZqMDDGSE2JyNrF16PUdFxMg1jbGF1ZGUtb3B1cy01OAFCCHRoaW5raW5nWiQwNjU0YzEzNC0wNTU4LTRhOWQtYjRkNi1mMjRjZjY2ZjdmOGaoAcft+9QGEgxXTFN3OaEfiY09i1AaDF3XZfWa/bcxlsHhTiIwOi9ruobRqSSS6KJRhAICyUGGbQOnihSZbvWzJ6dzRF9rOs9rih+vWqUmLkzS8u8oKkOPSeNNyGrfwdZZ0YxEsQy5IH3mwhZP08SfbaUn7n4sP92+aTMhiEWj2GSHVj/nAbEc1RXtjSKoGkftApaeRJZKVL3/GAE="
+     },
+     {
+      "type": "tool_use",
+      "id": "toolu_0179wFtBJU2y2VTh7ULVBkon",
+      "name": "list_directory",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "path": "wiki"
+      }
+     },
+     {
+      "type": "tool_use",
+      "id": "toolu_01BjibhSdsXrF5sKTZjhDY6P",
+      "name": "list_directory",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "path": "raw/pwa_exp"
+      }
+     }
+    ]
+   },
+   {
+    "role": "user",
+    "content": [
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_0179wFtBJU2y2VTh7ULVBkon",
+      "content": "wiki/\n  _templates/\n  concepts/\n  events/\n  experiments/\n  literature/\n  methods/\n  processes/\n  questions/\n  tables/\n  traps/\n  README.md"
+     },
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_01BjibhSdsXrF5sKTZjhDY6P",
+      "content": "raw/pwa_exp is a file, not a directory.",
+      "is_error": true
+     }
+    ]
+   },
+   {
+    "role": "assistant",
+    "content": [
+     {
+      "type": "tool_use",
+      "id": "toolu_01XBD5DvfN78bGkxyesLkYwH",
+      "name": "read_file",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "file_path": "raw/pwa_exp"
+      }
+     },
+     {
+      "type": "tool_use",
+      "id": "toolu_012vvDoHXhpSgc4Wab9FWhbF",
+      "name": "list_directory",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "path": "wiki/tables"
+      }
+     }
+    ]
+   },
+   {
+    "role": "user",
+    "content": [
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_01XBD5DvfN78bGkxyesLkYwH",
+      "content": "     1\tIAG loyalty is the company behind avios loyalty currency.\n     2\tone product is pay with avios for ba holidays.\n     3\twhen a member is booking an holiday he can redeem some of his avios for a disocunt on the holiday ticket.\n     4\the is presented to up to 9 options discount each of which is a percentage of the ticket as discount and each has a different conversion rate between cash and avios so that usually higher discount would have a more penalised conversion rate.\n     5\t\n     6\tit can go from 0.01 most favourable for the memerb to 0.004 least favorable.\n     7\t\n     8\tkey metrics for the business are number of bookings made using the product, avios redeemed, cash , and the cost per avios calculated as the sum of cash in the window divided by sum of avios.\n     9\t\n    10\twe dont have the actual booking volume from ba haolidays indipendently of using avios or not.. that is hidden. what i mean is that we can see all members logged in activities , search and booking but not the non members bookings.\n    11\t\n    12\t# an experiment was run\n    13\t\n    14\tthe first 2 weeks of august 2026 an experiment was run to flp the conversion rate, so for those 2 weeks the max discount became the most favourbale conversion rate for the user and min discount the least favourbale. the idea was to suffer likely a big cost that would have been an investiment to drive more booking nd ultimately keep the margin high.\n    15\t\n    16\tfor iagl margin is sum of avios redeem in the period times 0.00659 - sum of cash\n    17\t\n    18\tusually the marginal margin is very small as the cpa usually is around 0.005 but for this idea and considering ba holidays is now part of iagl to take also the margin that ba holidays get which is 10% of the ticket price. the idea is that with the new calculated margin formula iagl + ba holidays and an attractive proposition to the members the experiment would have been successful\n    19\t\n    20\t# the assessment of experiment challenge\n    21\t\n    22\tthe experiment did not have a split of a nd b group.\n    23\tthe only thing was that the policy treatment applyed to all members for all route but only for booking future departure within 2026 and not further in the future.\n    24\t\n    25\tapplying a DiD using temporal split.. same perios last year and a month before same perios last year as counterfactual unfortunately is biased as it turned out that same period last year was heavily contaminated by another change that happened last year.\n    26\t"
+     },
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_012vvDoHXhpSgc4Wab9FWhbF",
+      "content": "wiki/tables/\n  .gitkeep"
+     }
+    ]
+   },
+   {
+    "role": "assistant",
+    "content": [
+     {
+      "type": "thinking",
+      "thinking": "",
+      "signature": "CAIS3A4KjgEIERgCKkDl8rvgwRcgTcKHZRR+UEQGJ0kUUvdm+af5JqkQT/WC8oIRg2OiTAEs9I+SWNl2DrAKHiL37MLtFGp/42mthXlBMg1jbGF1ZGUtb3B1cy01OAFCCHRoaW5raW5nWiQwNjU0YzEzNC0wNTU4LTRhOWQtYjRkNi1mMjRjZjY2ZjdmOGaoAdLt+9QGEgzztERBkRqBsuX5+uQaDDrLJDDGUg7W3h/guSIwyqCTT369RSIvjgP1OOeGRVNg5sprcPs7Ut00l02bT8ekvw8f3zlC///YfjPvnPTpKvoM/rg7r5G3kxDQS+EKLMKPcO6QBl4r5T5jobiHOaYebUK6Ov0zd8m/KeEP5gg8X5MY4uwEglQt+yqASWOk60QMGH4eE0HpZWiibm3JDuxbaAdEYbNFw9CrWJmDFlGjW9ZQu5BvTI2FK8tM0pi6UuAekMLZZWhdfEUiua168zkt0g9+iK00cRkCATna5bzuusDxU2OOTlVwNlat+8Cke8M8oNn7H4U7iBzko0l54qZ6bleP5W1VS6F/IyOI7XXo4uLq5KUM0Zegxs1YiBZnmuaW3mWeNpmZxfMt55hMTjLeWnSSxouEYv3pwEx4eyzFg40OVLtoB4mPiC5B9zsL82k8alKNOMPizr1kaDLDbJDLfuwiEtTdDD1MegEM7aeCttbq3bbkgj2LsjlHVzDaHqHgM6dp/aQRP9Q8mZvmB8eZ6KjCjoO2pMcoqp62oYYsGg2WJEFKweHHKXlpgVJo9bupK42EZ3WcvdIAAzTv6yPmARBHWk91i/udQoZIi1Sg2MYyoM/BmQIdRmG8y67/oD3vljWLA9TtUpHqChh0aJpOqW2bioOTY+Qb1Za4BM4cA6qW3XRGYaY5cqGRb2FWigLPnCRXhWaiT4L5kJhFvzAy/BzIXjdyZP3H5LvbGj8by/6yINJxGVP4WyBJ4hAdmjjzCLQFhEunlFXnfMio5CUFYcX47zP+ok79TfHlsQRv9sdYFrj988DLXGtAcEpBQCycqyU5M1a4hpSneddAPIaejYNRs7axS4AuT0UvKxza0XExx7O2fDp9ZXvpL5To+yw+Q6mhTNOjertwf6Ht9qOUlnuJHNedZz0CY1L8/f/tiLeIitaRij/SC4omfryIsGyKUtCRqAxU3iMqWQEF0Nq20WNmHZA0iqY0edJd4jsILPHRc/Q55Ba+T9aMy+Ainnpd5CeQyc6GtAkTqcK9v4hGSX3dFmOROdNMH9S5L5y/8hGBjAqR4I4zAuX73ZxbvVuyFuIlkF+9D1dxWn/oECcz2seCtQ5Dae86VOZKz3hVccqNrQRqHxUOZEKt5jy1fN2Yw5bTc4WDSXQEt7EKwufs8Hkash8VWVssGnfaFFPB/DpqipscOn0kNe78rbh6Hukb6Kisg7/OysCqKcIfnRZEy9XeJ4tM5j5rILqJ1m6CPqgS+JKYBIzi7WGb4aQFPJucX+SXEh8Gfs5Iz/LDJGjA9L6RU2sIZYjyAB27qipw+JcAl87u92DcO2jwxIyEEaoni84EEK+VXuX4WBNIvjG1sFb46MGqBz1rkoFb1mgrCbF+re6rkWKAllJWXJH0gePxSCe4eWPK3kKS/Zc1cEcwMkbDEX4F761+8HQvBM3ysuEQvOs3FSI+ZJ2BgC1NzHPTN1s6FqWpYh9ijEqz/TVrqRVfBZZ2KzMPUAXNipnrUlFPEpMeHFOJE03zpvgrnocq8u6BIdwsqdG9GrV4WOkW5Jl6Sds8hGYJekg9bCTDbkbji7CQfIx9SOFkguPNkn10Ur0pgVcNkcEjhxGM+eUJsVcsrCR+ieOcZS3ioKJOYKe5p1G/NLT5Q2oVhlFQhP+IhUttyPX9BHUdNbuux4OzxJfsMkydgyyzFbPcoOvbLnkgZGvknX1c3uKpwNIA+CHCyjMTu+Pcsq7zE4MEg9WRzGpSYOJUhpCBSvd0ejSY2USvWdOiSlb1JxlBy5XDppaXUYebaM8+yq9HOOnYDrqB6PZKM4wchsnmOUroGzow/gBwojg3S3kIpkG2eI+neVsLNX+idz0fzpZZqytDSuq6akOmw6RX75yZLMNlXtvfjayOo+COI40TUHixTjB+lulu9xIeu6Z3EqZTONhCwvlt2amXnkx+7LRHb4QkcBr1YXYpYzqk3qXYD8+AZwPd8al4yvQN4RBngAr6ThbisMb1VppHuNnPekcLLJRP8E+eFwpepUGreK8tEloefDRGoVUWlZNafqx5B52x+KHMqoskAn0rbQSnA2RLtHUxxmeGQ7/er2wtUEq2jtUZW+05AIi8hcEqDOiIGnv+n+Y4cNfqZ44DRRY17syyFCf/GFxXnMdn25mfdbQPjjC5bUzLaBkx1BzZiRKOPEKiUOXPYOm/qwfkisnQ5MPtDD5sRJ1OVhie5OdIUdmcE/Naldg9rIsV+/B3OiVY8TRUktNlR8ebk+1ullefrML+WkmnBjrk2KIG2JR3oYGQITqWH9TWcfgYErEBYQ8LdlyXviMYAQ=="
+     },
+     {
+      "type": "text",
+      "text": "I've read everything the wiki holds on this. Here is what it already settles, so I don't spend your time re-asking it:\n\n**Already established (no need to confirm):**\n- **Treatment**: the discount-tier → conversion-rate mapping was *inverted* 1–14 Aug 2026 — max discount got the most favourable rate (0.01), min discount the least (0.004). Normally it runs the other way.\n- **Assignment rule**: no A/B split. It applied to **all** members and routes, but **only to bookings with a departure date inside 2026**. Departures 2027+ kept the standard ladder. That is the one and only untreated comparison group in existence.\n- **Known dead end**: the year-on-year DiD (Aug 2025 as counterfactual) is already recorded as **biased** — Aug 2025 was contaminated by a separate 2025 change that the source never names or dates.\n- **Observability limit**: non-member BA Holidays bookings are invisible to IAGL. So \"total booking volume\" is not an observable outcome. That is not a detail — it decides what question is even askable.\n- **No prior effect estimate exists**: `wiki/experiments/2026-08-conversion-rate-flip.md` deliberately records *no* readout, so nothing from that window can be quoted as an effect.\n- **No skills exist yet** — so if the data is live in your warehouse, connecting to it is a piece of work for `technician`, not something I can assume.\n\n`wiki/concepts/` is empty — this will be the first graph drawn here, under `graph: pwa-pricing`.\n\nThere is one **contradiction in the source** I have to resolve before anything else, because it changes what \"booking volume\" can even mean. The raw note says you see *\"all members logged-in activities, search and booking\"* — which implies member bookings made **without** Avios are visible. But the metrics page reads as if only Avios-redeeming bookings are countable. These are very different worlds: if member non-Avios bookings are visible, we can tell **incremental bookings** apart from **members simply switching into redeeming**. If they aren't, the flip's effect and a pure mix-shift are indistinguishable in the outcome.\n\n---\n\n**QUESTION FOR THE ANALYST:**\n\n> For a logged-in BA Holidays member who books a holiday but **does not** redeem any Avios — can you see that booking in your data?\n\n**Options:**\n1. **Yes — I can see all member bookings, with or without Avios redemption.** (So member bookings is a usable outcome, and Avios-redeeming bookings is a sub-set of it.)\n2. **No — I only see a booking when Avios are redeemed.** (Avios-redeeming bookings is the only outcome available.)\n3. **I can see member *searches* regardless, but only *bookings* when Avios are redeemed.** (Search volume is available as a separate, upstream measure.)\n4. **Partly / I'm not sure — I'd need to check.**"
+     }
+    ]
+   }
+  ]
+ },
+ "reads": {
+  "interviewer": [
+   "wiki/README.md",
+   "wiki/processes/pay-with-avios-ba-holidays.md",
+   "wiki/processes/iagl-pwa-metrics.md",
+   "wiki/events/2026-08-conversion-rate-flip-experiment.md",
+   "wiki/experiments/2026-08-conversion-rate-flip.md",
+   "wiki/questions/q-0001/q-0001.md",
+   ".claude/SKILLS.md",
+   "raw/pwa_exp"
+  ],
+  "main": [
+   "wiki/README.md",
+   "wiki/questions/INDEX.md",
+   ".claude/SKILLS.md",
+   "wiki/events/2026-08-conversion-rate-flip-experiment.md",
+   "wiki/experiments/2026-08-conversion-rate-flip.md",
+   "wiki/processes/iagl-pwa-metrics.md",
+   "wiki/processes/pay-with-avios-ba-holidays.md",
+   "wiki/_templates/question.md",
+   "wiki/questions/q-0001/q-0001.md"
+  ]
+ },
+ "log": [
+  {
+   "t": "2026-09-07T17:38:31.234Z",
+   "kind": "user",
+   "agent": "analyst",
+   "text": "[/cb_ask \"in relation to the change in price configuration for pwa in august 2026, no random experiments were conducted, how can i estimate the impact of the change in terms of booking volume?\"]\n\nA question is opening. Verbatim, this is what was asked:\n\nin relation to the change in price configuration for pwa in august 2026, no random experiments were conducted, how can i estimate the impact of the change in terms of booking volume?\n\n1. Read `wiki/README.md`, then grep the wiki for every noun in the question. Read what\n   comes back — concepts, events, processes, experiments, methods, literature, traps.\n   Read `wiki/questions/INDEX.md` too: this may be a question we have already answered.\n   **Then walk the graph** — read `wiki/concepts/` and work out what already causes this\n   outcome, what the treatment already causes, and what sits upstream of both. Anything\n   upstream of both is a confounder we have already established, and it gets stated\n   rather than asked about. Grep finds words; only the graph finds structure.\n   **Then read `.claude/SKILLS.md`** — what we can already *do*. An existing access skill\n   makes `live` data cheap instead of a project; an existing method skill means the\n   analysis is largely written. This changes what is worth proposing, so it belongs\n   before the interview, not after it.\n2. Create `wiki/questions/<qid>/<qid>.md` from `wiki/_templates/question.md`. Next free\n   id; `state: interviewing`. Fill `aliases:` with the words the analyst actually used —\n   that is how anyone finds this again in a month.\n3. Add the one-line entry to `wiki/questions/INDEX.md` now, not at close.\n4. Invoke the `running-an-interview` skill and run the interview.\n\n**Open by showing what you already found.** Never ask what the wiki answers.\n\nThree things the interview has to settle beyond the graph, and the skill says when to ask\neach:\n\n- **`data_mode`** — `live` (real connection in their environment), `sample` (an extract\n  they can give us), or `simulated` (no data; we generate it from the graph). This\n  changes what every later number is worth, so it is asked early.\n- **`deliverable`** — `notebook`, `report`, or `both`. Not every question wants code. A\n  test design usually wants an argument on a page.\n- **`delivery`** — `staged` (DAG notebook first, the default) or `full` (everything in\n  one pass, because they asked).\n\n**The interview has a budget.** Checkpoint at the third exchange and every third one\nafter: proceed, keep going, or park. The skill says how.\n\nIf the question has no dataset behind it, it is a methodology question — the skill has a\nsection for that, and it ends in `wiki/methods/`, not a graph."
+  },
+  {
+   "t": "2026-09-07T17:38:34.747Z",
+   "kind": "text",
+   "agent": "main",
+   "text": "I'll start by reading the wiki."
+  },
+  {
+   "t": "2026-09-07T17:38:34.747Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "read_file",
+   "input": {
+    "file_path": "wiki/README.md"
+   }
+  },
+  {
+   "t": "2026-09-07T17:38:34.747Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "read_file",
+   "input": {
+    "file_path": "wiki/questions/INDEX.md"
+   }
+  },
+  {
+   "t": "2026-09-07T17:38:34.747Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "read_file",
+   "input": {
+    "file_path": ".claude/SKILLS.md"
+   }
+  },
+  {
+   "t": "2026-09-07T17:38:37.285Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "glob",
+   "input": {
+    "pattern": "wiki/**/*.md"
+   }
+  },
+  {
+   "t": "2026-09-07T17:38:37.287Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "glob",
+   "input": {
+    "pattern": "raw/**/*"
+   }
+  },
+  {
+   "t": "2026-09-07T17:38:41.159Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "read_file",
+   "input": {
+    "file_path": "wiki/events/2026-08-conversion-rate-flip-experiment.md"
+   }
+  },
+  {
+   "t": "2026-09-07T17:38:41.159Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "read_file",
+   "input": {
+    "file_path": "wiki/experiments/2026-08-conversion-rate-flip.md"
+   }
+  },
+  {
+   "t": "2026-09-07T17:38:41.159Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "read_file",
+   "input": {
+    "file_path": "wiki/processes/iagl-pwa-metrics.md"
+   }
+  },
+  {
+   "t": "2026-09-07T17:38:41.159Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "read_file",
+   "input": {
+    "file_path": "wiki/processes/pay-with-avios-ba-holidays.md"
+   }
+  },
+  {
+   "t": "2026-09-07T17:38:43.778Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "read_file",
+   "input": {
+    "file_path": "wiki/_templates/question.md"
+   }
+  },
+  {
+   "t": "2026-09-07T17:38:52.415Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "write_file",
+   "input": {
+    "file_path": "wiki/questions/q-0001/q-0001.md",
+    "content": "---\nid: q-0001\ntext: \"in relation to the change in price configuration for pwa in august 2026, no random experiments were conducted, how can i estimate the impact of the change in terms of booking volume?\"\naliases: [\"the PWA price change\", \"the August conversion rate flip\", \"the Avios discount ladder flip\", \"the pwa booking volume question\"]\nopened: 2026-09-07\nstate: interviewing\nwindow: null\noutcome: bookings\ntreatment: pwa_discount_tier_conversion_rate\ngraph: pwa-pricing\n\ndata_mode: null       # live | sample | simulated — decides what any number here is worth\ndeliverable: null     # notebook | report | both\ndelivery: staged      # staged (dag first, default) | full (everything at once, they asked)\nrun_here: false\ndag_tested: no\n\nskills_used: []\nmethods: []\nexperiments_used: [\"[[2026-08-conversion-rate-flip]]\"]\n---\n\n## What was asked\nVerbatim:\n\n> in relation to the change in price configuration for pwa in august 2026, no random\n> experiments were conducted, how can i estimate the impact of the change in terms of\n> booking volume?\n\n## Verdict\n(pending interview and review)\n\n## Events in this window\n- [[2026-08-conversion-rate-flip-experiment]] — the treatment itself: the discount-tier /\n  conversion-rate mapping inverted 2026-08-01 to 2026-08-14, applied to all members and\n  routes but **only for departures within 2026**.\n- Unnamed 2025 change — contaminates August 2025, so the year-on-year DiD is known biased.\n  {source: raw/pwa_exp}\n\n## What we found\n\n## What we learned\n\n## Outcome log\n- 2026-09-07 — question opened. {q:q-0001 on:2026-09-07}\n"
+   }
+  },
+  {
+   "t": "2026-09-07T17:38:53.311Z",
+   "kind": "commit",
+   "agent": "main",
+   "path": "wiki/questions/q-0001/q-0001.md",
+   "commit": "13cb816c143a4342f9e1ec1e9fb3066241bc2355",
+   "url": "https://github.com/Guidosalimbeni/cb_wiki_storage/commit/13cb816c143a4342f9e1ec1e9fb3066241bc2355",
+   "text": "create wiki/questions/q-0001/q-0001.md"
+  },
+  {
+   "t": "2026-09-07T17:38:56.877Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "edit_file",
+   "input": {
+    "file_path": "wiki/questions/INDEX.md",
+    "old_string": "|     |                |             |       |         |",
+    "new_string": "| q-0001 | How to estimate the booking-volume impact of the Aug 2026 PWA price/conversion-rate change, with no randomisation | \"the PWA price change\", \"the August conversion rate flip\", \"the Avios discount ladder flip\" | interviewing | — |"
+   }
+  },
+  {
+   "t": "2026-09-07T17:38:57.738Z",
+   "kind": "commit",
+   "agent": "main",
+   "path": "wiki/questions/INDEX.md",
+   "commit": "321f89c3a16bb4fdfd953c83decfa58580a78d97",
+   "url": "https://github.com/Guidosalimbeni/cb_wiki_storage/commit/321f89c3a16bb4fdfd953c83decfa58580a78d97",
+   "text": "edit wiki/questions/INDEX.md"
+  },
+  {
+   "t": "2026-09-07T17:38:59.564Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "load_skill",
+   "input": {
+    "name": "running-an-interview"
+   }
+  },
+  {
+   "t": "2026-09-07T17:39:10.393Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "invoke_subagent",
+   "input": {
+    "agent": "interviewer",
+    "task": "Run the interview for a newly opened question.\n\nQuestion id: q-0001. Record: wiki/questions/q-0001/q-0001.md (already created, state: interviewing).\nIndex entry already added.\n\nVerbatim question from the analyst:\n\"in relation to the change in price configuration for pwa in august 2026, no random experiments were conducted, how can i estimate the impact of the change in terms of booking volume?\"\n\nRepository state you should read before speaking:\n- wiki/README.md\n- wiki/processes/pay-with-avios-ba-holidays.md\n- wiki/processes/iagl-pwa-metrics.md\n- wiki/events/2026-08-conversion-rate-flip-experiment.md\n- wiki/experiments/2026-08-conversion-rate-flip.md\n- wiki/questions/INDEX.md (q-0001 is the only question)\n- .claude/SKILLS.md (no skills exist yet — no access skill, so live data would need `technician`)\n- wiki/concepts/ is EMPTY — no nodes, no edges drawn yet. This is the first graph.\n- raw/pwa_exp exists as the ingested source.\n\nYour job: open by showing what the wiki already establishes (don't ask what it answers), settle outcome / population / window / data_mode / events / assignment mechanism / graph / observability / timing / deliverable / delivery, and draw the graph into wiki/concepts/ as edges are confirmed (use the drawing-the-dag skill). Note the recorded observability limit: non-member and non-Avios BA Holidays bookings are invisible, so total booking volume is not observable — only Avios-redeeming bookings. That is central and should shape your first questions rather than be discovered late.\n\nAsk ONE question per turn. End your turn with the exact question you want relayed to the analyst, plus 2-4 concrete answer options I can show as buttons. I will relay it verbatim and return the analyst's answer via resume. Today is 2026-09-07; the analyst is \"analyst\"."
+   }
+  },
+  {
+   "t": "2026-09-07T17:39:10.393Z",
+   "kind": "agent_start",
+   "agent": "interviewer",
+   "task": "Run the interview for a newly opened question.\n\nQuestion id: q-0001. Record: wiki/questions/q-0001/q-0001.md (already created, state: interviewing).\nIndex entry already added.\n\nVerbatim question from the analyst:\n\"in relation to the change in price configuration for pwa in august 2026, no random experiments were conducted, how can i estimate the impact of the change in terms of booking volume?\"\n\nRepository state you should read before speaking:\n- wiki/README.md\n- wiki/processes/pay-with-avios-ba-holidays.md\n- wiki/processes/iagl-pwa-metrics.md\n- wiki/events/2026-08-conversion-rate-flip-experiment.md\n- wiki/experiments/2026-08-conversion-rate-flip.md\n- wiki/questions/INDEX.md (q-0001 is the only question)\n- .claude/SKILLS.md (no skills exist yet — no access skill, so live data would need `technician`)\n- wiki/concepts/ is EMPTY — no nodes, no edges drawn yet. This is the first graph.\n- raw/pwa_exp exists as the ingested source.\n\nYour job: open by showing what the wiki already establishes (don't ask what it answers), settle outcome / population / window / data_mode / events / assignment mechanism / graph / observability / timing / deliverable / delivery, and draw the graph into wiki/concepts/ as edges are confirmed (use the drawing-the-dag skill). Note the recorded observability limit: non-member and non-Avios BA Holidays bookings are invisible, so total booking volume is not observable — only Avios-redeeming bookings. That is central and should shape your first questions rather than be discovered late.\n\nAsk ONE question per turn. End your turn with the exact question you want relayed to the analyst, plus 2-4 concrete answer options I can show as buttons. I will relay it verbatim and return the analyst's answer via resume. Today is 2026-09-07; the analyst is \"analyst\".",
+   "status": "fresh"
+  },
+  {
+   "t": "2026-09-07T17:39:12.664Z",
+   "kind": "text",
+   "agent": "interviewer",
+   "text": "I'll read the repository state first."
+  },
+  {
+   "t": "2026-09-07T17:39:12.664Z",
+   "kind": "tool",
+   "agent": "interviewer",
+   "name": "read_file",
+   "input": {
+    "file_path": "wiki/README.md"
+   }
+  },
+  {
+   "t": "2026-09-07T17:39:12.664Z",
+   "kind": "tool",
+   "agent": "interviewer",
+   "name": "read_file",
+   "input": {
+    "file_path": "wiki/processes/pay-with-avios-ba-holidays.md"
+   }
+  },
+  {
+   "t": "2026-09-07T17:39:15.360Z",
+   "kind": "tool",
+   "agent": "interviewer",
+   "name": "read_file",
+   "input": {
+    "file_path": "wiki/processes/iagl-pwa-metrics.md"
+   }
+  },
+  {
+   "t": "2026-09-07T17:39:15.360Z",
+   "kind": "tool",
+   "agent": "interviewer",
+   "name": "read_file",
+   "input": {
+    "file_path": "wiki/events/2026-08-conversion-rate-flip-experiment.md"
+   }
+  },
+  {
+   "t": "2026-09-07T17:39:15.360Z",
+   "kind": "tool",
+   "agent": "interviewer",
+   "name": "read_file",
+   "input": {
+    "file_path": "wiki/experiments/2026-08-conversion-rate-flip.md"
+   }
+  },
+  {
+   "t": "2026-09-07T17:39:17.518Z",
+   "kind": "tool",
+   "agent": "interviewer",
+   "name": "read_file",
+   "input": {
+    "file_path": "wiki/questions/q-0001/q-0001.md"
+   }
+  },
+  {
+   "t": "2026-09-07T17:39:17.518Z",
+   "kind": "tool",
+   "agent": "interviewer",
+   "name": "read_file",
+   "input": {
+    "file_path": ".claude/SKILLS.md"
+   }
+  },
+  {
+   "t": "2026-09-07T17:39:19.525Z",
+   "kind": "tool",
+   "agent": "interviewer",
+   "name": "list_directory",
+   "input": {
+    "path": "wiki"
+   }
+  },
+  {
+   "t": "2026-09-07T17:39:19.525Z",
+   "kind": "tool",
+   "agent": "interviewer",
+   "name": "list_directory",
+   "input": {
+    "path": "raw/pwa_exp"
+   }
+  },
+  {
+   "t": "2026-09-07T17:39:19.525Z",
+   "kind": "tool",
+   "agent": "interviewer",
+   "name": "list_directory",
+   "ok": false,
+   "text": "raw/pwa_exp is a file, not a directory."
+  },
+  {
+   "t": "2026-09-07T17:39:21.160Z",
+   "kind": "tool",
+   "agent": "interviewer",
+   "name": "read_file",
+   "input": {
+    "file_path": "raw/pwa_exp"
+   }
+  },
+  {
+   "t": "2026-09-07T17:39:21.161Z",
+   "kind": "tool",
+   "agent": "interviewer",
+   "name": "list_directory",
+   "input": {
+    "path": "wiki/tables"
+   }
+  },
+  {
+   "t": "2026-09-07T17:39:44.426Z",
+   "kind": "text",
+   "agent": "interviewer",
+   "text": "I've read everything the wiki holds on this. Here is what it already settles, so I don't spend your time re-asking it:\n\n**Already established (no need to confirm):**\n- **Treatment**: the discount-tier → conversion-rate mapping was *inverted* 1–14 Aug 2026 — max discount got the most favourable rate (0.01), min discount the least (0.004). Normally it runs the other way.\n- **Assignment rule**: no A/B split. It applied to **all** members and routes, but **only to bookings with a departure date inside 2026**. Departures 2027+ kept the standard ladder. That is the one and only untreated comparison group in existence.\n- **Known dead end**: the year-on-year DiD (Aug 2025 as counterfactual) is already recorded as **biased** — Aug 2025 was contaminated by a separate 2025 change that the source never names or dates.\n- **Observability limit**: non-member BA Holidays bookings are invisible to IAGL. So \"total booking volume\" is not an observable outcome. That is not a detail — it decides what question is even askable.\n- **No prior effect estimate exists**: `wiki/experiments/2026-08-conversion-rate-flip.md` deliberately records *no* readout, so nothing from that window can be quoted as an effect.\n- **No skills exist yet** — so if the data is live in your warehouse, connecting to it is a piece of work for `technician`, not something I can assume.\n\n`wiki/concepts/` is empty — this will be the first graph drawn here, under `graph: pwa-pricing`.\n\nThere is one **contradiction in the source** I have to resolve before anything else, because it changes what \"booking volume\" can even mean. The raw note says you see *\"all members logged-in activities, search and booking\"* — which implies member bookings made **without** Avios are visible. But the metrics page reads as if only Avios-redeeming bookings are countable. These are very different worlds: if member non-Avios bookings are visible, we can tell **incremental bookings** apart from **members simply switching into redeeming**. If they aren't, the flip's effect and a pure mix-shift are indistinguishable in the outcome.\n\n---\n\n**QUESTION FOR THE ANALYST:**\n\n> For a logged-in BA Holidays member who books a holiday but **does not** redeem any Avios — can you see that booking in your data?\n\n**Options:**\n1. **Yes — I can see all member bookings, with or without Avios redemption.** (So member bookings is a usable outcome, and Avios-redeeming bookings is a sub-set of it.)\n2. **No — I only see a booking when Avios are redeemed.** (Avios-redeeming bookings is the only outcome available.)\n3. **I can see member *searches* regardless, but only *bookings* when Avios are redeemed.** (Search volume is available as a separate, upstream measure.)\n4. **Partly / I'm not sure — I'd need to check.**"
+  },
+  {
+   "t": "2026-09-07T17:39:44.426Z",
+   "kind": "agent_end",
+   "agent": "interviewer",
+   "status": "done",
+   "text": "I've read everything the wiki holds on this. Here is what it already settles, so I don't spend your time re-asking it:\n\n**Already established (no need to confirm):**\n- **Treatment**: the discount-tier → conversion-rate mapping was *inverted* 1–14 Aug 2026 — max discount got the most favourable rate (0.01), min discount the least (0.004). Normally it runs the other way.\n- **Assignment rule**: no A/B split. It applied to **all** members and routes, but **only to bookings with a departure date inside 2026**. Departures 2027+ kept the standard ladder. That is the one and only untreated comparison group in existence.\n- **Known dead end**: the year-on-year DiD (Aug 2025 as counterfactual) is already recorded as **biased** — Aug 2025 was contaminated by a separate 2025 change that the source never names or dates.\n- **Observability limit**: non-member BA Holidays bookings are invisible to IAGL. So \"total booking volume\" is not an observable outcome. That is not a detail — it decides what question is even askable.\n- **No prior effect estimate exists**: `wiki/experiments/2026-08-conversion-rate-flip.md` deliberately records *no* readout, so nothing from that window can be quoted as an effect.\n- **No skills exist yet** — so if the data is live in your warehouse, connecting to it is a piece of work for `technician`, not something I can assume.\n\n`wiki/concepts/` is empty — this will be the first graph drawn here, under `graph: pwa-pricing`.\n\nThere is one **contradiction in the source** I have to resolve before anything else, because it changes what \"booking volume\" can even mean. The raw note says you see *\"all members logged-in activities, search and booking\"* — which implies member bookings made **without** Avios are visible. But the metrics page reads as if only Avios-redeeming bookings are countable. These are very different worlds: if member non-Avios bookings are visible, we can tell **incremental bookings** apart from **members simply switching into redeeming**. If they aren't, the flip's effect and a pure mix-shift are indistinguishable in the outcome.\n\n---\n\n**QUESTION FOR THE ANALYST:**\n\n> For a logged-in BA Holidays member who books a holiday but **does not** redeem any Avios — can you see that booking in your data?\n\n**Options:**\n1. **Yes — I can see all member bookings, with or without Avios redemption.** (So member bookings is a usable outcome, and Avios-redeeming bookings is a sub-set of it.)\n2. **No — I only see a booking when Avios are redeemed.** (Avios-redeeming bookings is the only outcome available.)\n3. **I can see member *searches* regardless, but only *bookings* when Avios are redeemed.** (Search volume is available as a separate, upstream measure.)\n4. **Partly / I'm not sure — I'd need to check.**"
+  },
+  {
+   "t": "2026-09-07T17:39:48.980Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "ask_analyst",
+   "input": {
+    "questions": [
+     {
+      "header": "Visibility",
+      "question": "For a logged-in BA Holidays member who books a holiday but **does not** redeem any Avios — can you see that booking in your data?",
+      "options": [
+       {
+        "label": "Yes, all member bookings",
+        "description": "I can see all member bookings, with or without Avios redemption. So member bookings is a usable outcome, and Avios-redeeming bookings is a subset of it."
+       },
+       {
+        "label": "No, only Avios redemptions",
+        "description": "I only see a booking when Avios are redeemed. Avios-redeeming bookings is the only outcome available."
+       },
+       {
+        "label": "Searches yes, bookings no",
+        "description": "I can see member searches regardless, but only bookings when Avios are redeemed. Search volume is available as a separate, upstream measure."
+       },
+       {
+        "label": "Partly / need to check",
+        "description": "I'm not sure and would need to check."
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "t": "2026-09-07T17:39:48.980Z",
+   "kind": "ask",
+   "agent": "main",
+   "questions": [
+    {
+     "question": "For a logged-in BA Holidays member who books a holiday but **does not** redeem any Avios — can you see that booking in your data?",
+     "header": "Visibility",
+     "options": [
+      {
+       "label": "Yes, all member bookings",
+       "description": "I can see all member bookings, with or without Avios redemption. So member bookings is a usable outcome, and Avios-redeeming bookings is a subset of it."
+      },
+      {
+       "label": "No, only Avios redemptions",
+       "description": "I only see a booking when Avios are redeemed. Avios-redeeming bookings is the only outcome available."
+      },
+      {
+       "label": "Searches yes, bookings no",
+       "description": "I can see member searches regardless, but only bookings when Avios are redeemed. Search volume is available as a separate, upstream measure."
+      },
+      {
+       "label": "Partly / need to check",
+       "description": "I'm not sure and would need to check."
+      }
+     ],
+     "multiSelect": false
+    }
+   ]
+  }
+ ],
+ "commits": 2,
+ "usage": {
+  "input": 138043,
+  "output": 4888,
+  "cacheRead": 142585
+ },
+ "pending": {
+  "toolUseId": "toolu_011p48hLKAGDA7jmypmKU52b",
+  "toolName": "ask_analyst",
+  "payload": [
+   {
+    "question": "For a logged-in BA Holidays member who books a holiday but **does not** redeem any Avios — can you see that booking in your data?",
+    "header": "Visibility",
+    "options": [
+     {
+      "label": "Yes, all member bookings",
+      "description": "I can see all member bookings, with or without Avios redemption. So member bookings is a usable outcome, and Avios-redeeming bookings is a subset of it."
+     },
+     {
+      "label": "No, only Avios redemptions",
+      "description": "I only see a booking when Avios are redeemed. Avios-redeeming bookings is the only outcome available."
+     },
+     {
+      "label": "Searches yes, bookings no",
+      "description": "I can see member searches regardless, but only bookings when Avios are redeemed. Search volume is available as a separate, upstream measure."
+     },
+     {
+      "label": "Partly / need to check",
+      "description": "I'm not sure and would need to check."
+     }
+    ],
+    "multiSelect": false
+   }
+  ],
+  "partialResults": [],
+  "questions": [
+   {
+    "question": "For a logged-in BA Holidays member who books a holiday but **does not** redeem any Avios — can you see that booking in your data?",
+    "header": "Visibility",
+    "options": [
+     {
+      "label": "Yes, all member bookings",
+      "description": "I can see all member bookings, with or without Avios redemption. So member bookings is a usable outcome, and Avios-redeeming bookings is a subset of it."
+     },
+     {
+      "label": "No, only Avios redemptions",
+      "description": "I only see a booking when Avios are redeemed. Avios-redeeming bookings is the only outcome available."
+     },
+     {
+      "label": "Searches yes, bookings no",
+      "description": "I can see member searches regardless, but only bookings when Avios are redeemed. Search volume is available as a separate, upstream measure."
+     },
+     {
+      "label": "Partly / need to check",
+      "description": "I'm not sure and would need to check."
+     }
+    ],
+    "multiSelect": false
+   }
+  ]
+ },
+ "qid": "q-0001",
+ "lastCommand": "cb_ask",
+ "final": "I'll start by reading the wiki."
+}
