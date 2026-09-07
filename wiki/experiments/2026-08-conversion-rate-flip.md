@@ -50,9 +50,10 @@ are plausibly related to both redemption behaviour and booking volume.
 ## Do not reuse this if
 
 Do not quote any number from this window as an effect of the flip until a design has been
-reviewed. Also note the visibility limit on the outcome: non-member and non-Avios BA
-Holidays bookings are invisible, so total booking volume is not observable — only
-Avios-redeeming bookings are.
+reviewed. Also note the visibility limit on the outcome: **non-member** BA Holidays
+bookings are invisible, so *total* BA Holidays booking volume is not observable.
+Corrected in interview: **all member bookings are visible**, redeeming or not — the
+invisible group is non-members, not non-redeemers. {q:q-0001 on:2026-09-07}
 
 ## Questions that used it
 
