@@ -2,7 +2,7 @@
  "id": "t-20260907173831-54wp",
  "title": "q-0001 · in relation to the change in price configuration for pwa in august 2026, no random experiments were conducted, h",
  "created": "2026-09-07T17:38:31.234Z",
- "updated": "2026-09-07T17:39:48.980Z",
+ "updated": "2026-09-07T17:40:50.963Z",
  "awaiting": "answer",
  "main": [
   {
@@ -374,6 +374,83 @@
      }
     }
    ]
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_011p48hLKAGDA7jmypmKU52b",
+     "content": "The analyst answered:\n\nQ: For a logged-in BA Holidays member who books a holiday but **does not** redeem any Avios — can you see that booking in your data?\nA: Yes, all member bookings"
+    }
+   ]
+  },
+  {
+   "role": "assistant",
+   "content": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01PJf388ok9zBz1T9Xbu9Jnw",
+     "name": "invoke_subagent",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "agent": "interviewer",
+      "resume": true,
+      "task": "The analyst answered:\n\nQ: For a logged-in BA Holidays member who books a holiday but does not redeem any Avios — can you see that booking in your data?\nA: \"Yes, all member bookings\" — i.e. all member bookings are visible, with or without Avios redemption; Avios-redeeming bookings are a subset.\n\nContinue the interview. One question per turn, with 2-4 concrete options."
+     }
+    }
+   ]
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_01PJf388ok9zBz1T9Xbu9Jnw",
+     "content": "That's a materially better position than the wiki had recorded. I've corrected both pages: the hidden group is **non-members**, not non-redeemers.\n\nWhy it matters: member booking volume *is* an observable outcome, and it splits into redeeming and non-redeeming bookings. That's what lets us separate a real increase in bookings from members simply **switching into redeeming** on holidays they'd have booked anyway — which is the single most likely way this experiment looks successful while creating no incremental volume at all.\n\nBefore I go further into structure, I need to settle what we'll actually run this against, because it decides what any number is worth and there is no warehouse access skill here yet.\n\n---\n\n**QUESTION FOR THE ANALYST:**\n\n> When it comes to actually running this — where does the booking data live for you?\n\n**Options:**\n1. **Live** — I have a real connection in my own environment (warehouse/notebook) and can run against the real bookings data. *(An estimate here is about the company. If a connection needs building, that's a job for `technician`.)*\n2. **Sample** — I can hand you an extract (CSV/parquet) of member bookings over the relevant period. *(An estimate is about that extract; I'll need to know how it was filtered.)*\n3. **Simulated** — nothing available to share yet; generate data from the graph so we can check the design and the estimator work. *(Tests the code, never says anything about the company.)*\n4. **Live for me to run, but start me off on simulated** — you write and check the machinery on simulated data, I run the real thing my end."
+    }
+   ]
+  },
+  {
+   "role": "assistant",
+   "content": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01KDAMYsTVVLSP57T8mvafxB",
+     "name": "ask_analyst",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "questions": [
+       {
+        "header": "Data mode",
+        "question": "When it comes to actually running this — where does the booking data live for you?",
+        "options": [
+         {
+          "label": "Live",
+          "description": "I have a real connection in my own environment (warehouse/notebook) and can run against real bookings data. An estimate here is about the company. If a connection needs building, that's a job for technician."
+         },
+         {
+          "label": "Sample extract",
+          "description": "I can hand you an extract (CSV/parquet) of member bookings over the relevant period. An estimate is about that extract; I'll need to know how it was filtered."
+         },
+         {
+          "label": "Simulated",
+          "description": "Nothing available to share yet; generate data from the graph so we can check the design and the estimator work. Tests the code, never says anything about the company."
+         },
+         {
+          "label": "Simulated first, live my end",
+          "description": "You write and check the machinery on simulated data, I run the real thing my end."
+         }
+        ]
+       }
+      ]
+     }
+    }
+   ]
   }
  ],
  "agents": {
@@ -629,6 +706,89 @@
      {
       "type": "text",
       "text": "I've read everything the wiki holds on this. Here is what it already settles, so I don't spend your time re-asking it:\n\n**Already established (no need to confirm):**\n- **Treatment**: the discount-tier → conversion-rate mapping was *inverted* 1–14 Aug 2026 — max discount got the most favourable rate (0.01), min discount the least (0.004). Normally it runs the other way.\n- **Assignment rule**: no A/B split. It applied to **all** members and routes, but **only to bookings with a departure date inside 2026**. Departures 2027+ kept the standard ladder. That is the one and only untreated comparison group in existence.\n- **Known dead end**: the year-on-year DiD (Aug 2025 as counterfactual) is already recorded as **biased** — Aug 2025 was contaminated by a separate 2025 change that the source never names or dates.\n- **Observability limit**: non-member BA Holidays bookings are invisible to IAGL. So \"total booking volume\" is not an observable outcome. That is not a detail — it decides what question is even askable.\n- **No prior effect estimate exists**: `wiki/experiments/2026-08-conversion-rate-flip.md` deliberately records *no* readout, so nothing from that window can be quoted as an effect.\n- **No skills exist yet** — so if the data is live in your warehouse, connecting to it is a piece of work for `technician`, not something I can assume.\n\n`wiki/concepts/` is empty — this will be the first graph drawn here, under `graph: pwa-pricing`.\n\nThere is one **contradiction in the source** I have to resolve before anything else, because it changes what \"booking volume\" can even mean. The raw note says you see *\"all members logged-in activities, search and booking\"* — which implies member bookings made **without** Avios are visible. But the metrics page reads as if only Avios-redeeming bookings are countable. These are very different worlds: if member non-Avios bookings are visible, we can tell **incremental bookings** apart from **members simply switching into redeeming**. If they aren't, the flip's effect and a pure mix-shift are indistinguishable in the outcome.\n\n---\n\n**QUESTION FOR THE ANALYST:**\n\n> For a logged-in BA Holidays member who books a holiday but **does not** redeem any Avios — can you see that booking in your data?\n\n**Options:**\n1. **Yes — I can see all member bookings, with or without Avios redemption.** (So member bookings is a usable outcome, and Avios-redeeming bookings is a sub-set of it.)\n2. **No — I only see a booking when Avios are redeemed.** (Avios-redeeming bookings is the only outcome available.)\n3. **I can see member *searches* regardless, but only *bookings* when Avios are redeemed.** (Search volume is available as a separate, upstream measure.)\n4. **Partly / I'm not sure — I'd need to check.**"
+     }
+    ]
+   },
+   {
+    "role": "user",
+    "content": "The analyst answered:\n\nQ: For a logged-in BA Holidays member who books a holiday but does not redeem any Avios — can you see that booking in your data?\nA: \"Yes, all member bookings\" — i.e. all member bookings are visible, with or without Avios redemption; Avios-redeeming bookings are a subset.\n\nContinue the interview. One question per turn, with 2-4 concrete options."
+   },
+   {
+    "role": "assistant",
+    "content": [
+     {
+      "type": "thinking",
+      "thinking": "",
+      "signature": "CAISjhAKjgEIERgCKkBuF0vpbjy0abY7kbM9Z9vQmRw1m1DuMQBIV4ScWwszKtZJ6Erxt7yCGBIQ90jBEewtv6upUn8F1R8D2MgbFlGkMg1jbGF1ZGUtb3B1cy01OAFCCHRoaW5raW5nWiQwNjU0YzEzNC0wNTU4LTRhOWQtYjRkNi1mMjRjZjY2ZjdmOGaoAYfu+9QGEgy+t5qUZlqdob14OYsaDJEi/G57SqfkDSCSaCIwe4Fv5UzZ+Q/8ekJV3KTXwsgAFyRwV0/GpaSSLyPqjudE0cuReO46oLs+puNiOIm8KqwOdtufiTNQlx1RFoBTQkcMWBoa2OAavKL7im73IecR4LILhDf7bwRFchzL3O5WJilM094FPb6IvAazDkGUHsm6VoBjYT5jPLvYfFDdArvsIyPKuQA1PFmyUphqixyqmfHuquPUjZWkpxcl8ILdGURqTuHmKHVwUsD2/QP3OWm+vEa/6LlU0eHjS6/FaqLG/DEBD1/p9wyC27TqFQm8Hw6Yoxc4ntnDhrG7JFijkPhJPPST3KrYr0Tf4T+7U/go73JFP4c86uhxz+E03unXUT4QI9iotV3tfgFGJpWYFtrv2lN3Q9XYdqMMQPE7IR+YhsrLhCRpU0J26EaUsJFvQB6MGdIBTl6s9A5dk+JyJMzIa3c7egWf8O2vfykIfk7ew0RJ2K7NDARm/JihYpWLnPgRJOdGa2UZkdVJTZ8kRpi8lfj9YT6vr6k28uo6H71vkzGuvb62YvT8F/AuUuh9xyjdrEEOxl0oONgoCVBjP7hwQL+yINJXyrM4dDlDzoCe4NB1dNxvebJvM4FBkK7j0v88zbawtBts9K7guEHu9Q/x/vBUB4DDJcvSuCf4M55u2nyVWdlBMu1IkBWJNYNB1FJrcLNz6Zvy0JS9Gb7ktSxDsqSI4K+iVNEg65zonEhk6GHGTuMFYv539+r0JOj7lPgQNtktDSBFE0TIczKbgsFS76QCEaE+rOJfITSqG1gDQZAPZnAjQuCZvNqVp/i6xXskCuJmPVnNJUcUob5ctrk3dR3ZD2cf1JyZj5bquIzWD7kHMmLZq3oj+v5B75LySvrPDZ64tGRh3E7u+JojCXWfEStoHQyil+7PaNwxoKRNn10Jly23CrBPOgCO2pbumggpCQuqoz4m9spWd10PI/ci6o8AvbwA0au3rLqTcGDBHf4u9+Klxp1jLhb6GXtgHHlPwczbvdgh0kZXHPd78l91OT+Ohgk825R2N7mPz0UNP8Bj3W2+tR6/dGYRKONjj9TzcVwQ3iEcb7nVW3FUHWVlIhtVuZZCf6kJ4FGynL+sKtRdqBhcETmIuFbGMJ/YJPoJccprn0CYn461o7G334Pg3r2/CzOd4KSDgP+P8QAHRB1nqxV/W3rPl7HOA20IsyKWYBds70trJWyPKbqhIrzjje08YPQJXfI0kedwCM0Y7Udg5ERhcN6k0KQN3tecK24oPJnTpVPclB2oBTl2SfnpsMJphj3HgEyidlOjTV5XQRfSq7Uyevt5NaCPT8bTmwM7Ki8EKZioxAiOtmRI4L/+BfGVuJ4A5li3oBLWfAeSPQpQlpLoB4HT1Ppi/4rJkdHg0fVoiKueL3AuST9c/M+7fbHTlJqBsAuD0IgKItir6W8y54vnNZDSCOJFLTgNJLvK7co+lWa8fqatYRK/m7bQkou0IkCTEhzp2cFu7cQLjRUtCshm3HTFGlgciaoMiw+7T+kFBcDCRp4tpBIKOjKU6VSY1yMe+jcRL4zk/8U/rvvwhzXHsf0GHiK8N3VKkSZY7gLIM1VfdxwHEKQv2EeRur7djmlHRD8HK9TIMND+Dck3q20hMA6FevHicZv6OSa+dPwILZsy8mqfIIpB1NjXmJq/P4fJx8Dn/gJJTDmSe5nMYS9S/TRAKdkQsDqp0RjRm+n7NrwcZKxNLV1ioChD9hxvZT0BMXBFaGsZ7Tjn72OM8Ed7pXvird77v3s6llQJMQHYd7O9h0Aly7nWziI2E+H/4XNINhK4AghPdzAcDWyLKzA/My5qQS5zmyUu4KTWR64N78VY9ZBUQBKyKbZRQp3nfNsewLlpmXC7g1blapgdWZUVAW6jGe1eMgzS0L70gZQFTBnt9TWOgEbOrxjbMfgAkGOWS7+OZjE+cKGqoEVXzOOAr2tSn99AcUSsxGjIRe3vzH1HuBHPL130CY3uj7q7+yXH/y8CWtE3XJDlKYsccIb7FTy4iePF8azqgGYQ9pWXlPlsjSZ9H9DZuT9Ei+ELdOOTBtWVN0F923P+mDnvxswzXErG6YS+T0Fi9iWsg9HnlXYJoL/lF0N2MOleRdjD0h9Fk6ij2ArSlJkX6e2wtJvFARwU+XOLy9FBGWnpLeeFqIpbzzOoejdG5pPDOSnA7BKYpuB1ishF2h9bstixD/NlxQKjpSciZ8IinCq2oTQFmr15roaoR3NOT6o+VhApoNBVp+MGhgXBRJCXIKfnP+tBBH3vLdJ/ckibeScs9XYgwmIOkIVJ861OwgwIL+DCwMKIG1CHBctSax7ixbtFI2Yospo/sahb0LFQJ6lbrwqiM8KoQoW4nB3D7GnTyhmcrDGiXQmk+XEJk9pmEdUxhXXK8FEYbtrIvR1x/k0wY0z2pdW0Vz0pHpHSH0sS1InpvJZUyc9b9N+pfGpaCQic2NsyWF1bo7LZ5xHerIOoKFZWEU40muUXQrV6nN31LSZaZ7O2nBhoXgf3WHfb7ZRH6X3iZBGLKK8y+PxiGAE="
+     },
+     {
+      "type": "text",
+      "text": "Two things follow from that, and one of them corrects the wiki."
+     },
+     {
+      "type": "tool_use",
+      "id": "toolu_01QLW6yDHgUAtcJfFCRo7Etu",
+      "name": "edit_file",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "file_path": "wiki/processes/pay-with-avios-ba-holidays.md",
+       "old_string": "## What is and is not observable\n\n**This is the central data limitation of the product.**\n\n- Visible: all *logged-in member* activity — searches and bookings.\n- **Not visible: BA Holidays booking volume independent of Avios use.** Non-member\n  bookings are hidden from IAGL. {source: raw/pwa_exp}\n\nSo the denominator \"all BA Holidays bookings\" does not exist in our data. Any metric\nphrased as a *share* of total BA Holidays bookings is not computable as stated, and any\ndesign that needs untreated non-member bookings as a control group is unavailable.",
+       "new_string": "## What is and is not observable\n\n**This is the central data limitation of the product.**\n\n- Visible: all *logged-in member* activity — searches and **all member bookings, whether\n  or not Avios were redeemed**. Avios-redeeming bookings are a strict subset of visible\n  member bookings. Confirmed by the analyst in interview. {q:q-0001 on:2026-09-07}\n- **Not visible: non-member BA Holidays bookings.** These are hidden from IAGL.\n  {source: raw/pwa_exp}\n\nCorrection: an earlier reading of `raw/pwa_exp` implied that only Avios-redeeming\nbookings were countable. That was wrong. The invisible group is **non-members**, not\nnon-redeemers. {q:q-0001 on:2026-09-07}\n\nConsequences:\n\n- The denominator \"all BA Holidays bookings\" still does not exist in our data, so any\n  metric phrased as a share of *total* BA Holidays bookings is not computable as stated,\n  and non-member bookings are unavailable as a control group.\n- But **member booking volume is an observable outcome**, and it can be decomposed into\n  redeeming and non-redeeming bookings. This is what lets a genuine increase in bookings\n  be told apart from members merely switching into redeeming on bookings they would have\n  made anyway. That distinction is the crux of q-0001."
+      }
+     }
+    ]
+   },
+   {
+    "role": "user",
+    "content": [
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_01QLW6yDHgUAtcJfFCRo7Etu",
+      "content": "The file wiki/processes/pay-with-avios-ba-holidays.md has been updated (commit f9eb89d). Here's the result of running `cat -n` on a snippet of the edited file:\n"
+     }
+    ]
+   },
+   {
+    "role": "assistant",
+    "content": [
+     {
+      "type": "thinking",
+      "thinking": "",
+      "signature": "CAIStwIKjgEIERgCKkCQ+2KTIKd0kbbeIs5/ZlDoBUx3+8NIYFhHpPsgAHtAfM30ZVe1pm8Lsv5ngMingeiVuTIKhOEtLW+HEduwx9sjMg1jbGF1ZGUtb3B1cy01OAFCCHRoaW5raW5nWiQwNjU0YzEzNC0wNTU4LTRhOWQtYjRkNi1mMjRjZjY2ZjdmOGaoAZLu+9QGEgxJrBsJpJa8IQ4cUjoaDLpIo9ja1lQz5/tgCiIwGJVpW77xqTO/iUYUytaqIE6pSPCPCIohdLQoN0gSOCcUstIovVT+vZXmktFewlLcKlYznwqh9daq3wdkPHdKxTGmVJvGFEiF1EWub6gSD01mM1kysrTdFmjAP+vxfNL9YORzoyWJ5WSUc21R6tPgfSJoOS2l8ok445RM/vLMHdMZf3f7Eq8XcxgB"
+     },
+     {
+      "type": "tool_use",
+      "id": "toolu_018grY6fuaiXKfKMQzvYxFyY",
+      "name": "edit_file",
+      "caller": {
+       "type": "direct"
+      },
+      "input": {
+       "file_path": "wiki/experiments/2026-08-conversion-rate-flip.md",
+       "old_string": "reviewed. Also note the visibility limit on the outcome: non-member and non-Avios BA\nHolidays bookings are invisible, so total booking volume is not observable — only\nAvios-redeeming bookings are.",
+       "new_string": "reviewed. Also note the visibility limit on the outcome: **non-member** BA Holidays\nbookings are invisible, so *total* BA Holidays booking volume is not observable.\nCorrected in interview: **all member bookings are visible**, redeeming or not — the\ninvisible group is non-members, not non-redeemers. {q:q-0001 on:2026-09-07}"
+      }
+     }
+    ]
+   },
+   {
+    "role": "user",
+    "content": [
+     {
+      "type": "tool_result",
+      "tool_use_id": "toolu_018grY6fuaiXKfKMQzvYxFyY",
+      "content": "The file wiki/experiments/2026-08-conversion-rate-flip.md has been updated (commit d7fc77e). Here's the result of running `cat -n` on a snippet of the edited file:\n"
+     }
+    ]
+   },
+   {
+    "role": "assistant",
+    "content": [
+     {
+      "type": "text",
+      "text": "That's a materially better position than the wiki had recorded. I've corrected both pages: the hidden group is **non-members**, not non-redeemers.\n\nWhy it matters: member booking volume *is* an observable outcome, and it splits into redeeming and non-redeeming bookings. That's what lets us separate a real increase in bookings from members simply **switching into redeeming** on holidays they'd have booked anyway — which is the single most likely way this experiment looks successful while creating no incremental volume at all.\n\nBefore I go further into structure, I need to settle what we'll actually run this against, because it decides what any number is worth and there is no warehouse access skill here yet.\n\n---\n\n**QUESTION FOR THE ANALYST:**\n\n> When it comes to actually running this — where does the booking data live for you?\n\n**Options:**\n1. **Live** — I have a real connection in my own environment (warehouse/notebook) and can run against the real bookings data. *(An estimate here is about the company. If a connection needs building, that's a job for `technician`.)*\n2. **Sample** — I can hand you an extract (CSV/parquet) of member bookings over the relevant period. *(An estimate is about that extract; I'll need to know how it was filtered.)*\n3. **Simulated** — nothing available to share yet; generate data from the graph so we can check the design and the estimator work. *(Tests the code, never says anything about the company.)*\n4. **Live for me to run, but start me off on simulated** — you write and check the machinery on simulated data, I run the real thing my end."
      }
     ]
    }
@@ -1012,37 +1172,182 @@
      "multiSelect": false
     }
    ]
+  },
+  {
+   "t": "2026-09-07T17:40:08.375Z",
+   "kind": "user",
+   "agent": "analyst",
+   "text": "The analyst answered:\n\nQ: For a logged-in BA Holidays member who books a holiday but **does not** redeem any Avios — can you see that booking in your data?\nA: Yes, all member bookings"
+  },
+  {
+   "t": "2026-09-07T17:40:12.148Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "invoke_subagent",
+   "input": {
+    "agent": "interviewer",
+    "resume": true,
+    "task": "The analyst answered:\n\nQ: For a logged-in BA Holidays member who books a holiday but does not redeem any Avios — can you see that booking in your data?\nA: \"Yes, all member bookings\" — i.e. all member bookings are visible, with or without Avios redemption; Avios-redeeming bookings are a subset.\n\nContinue the interview. One question per turn, with 2-4 concrete options."
+   }
+  },
+  {
+   "t": "2026-09-07T17:40:12.148Z",
+   "kind": "agent_start",
+   "agent": "interviewer",
+   "task": "The analyst answered:\n\nQ: For a logged-in BA Holidays member who books a holiday but does not redeem any Avios — can you see that booking in your data?\nA: \"Yes, all member bookings\" — i.e. all member bookings are visible, with or without Avios redemption; Avios-redeeming bookings are a subset.\n\nContinue the interview. One question per turn, with 2-4 concrete options.",
+   "status": "resumed"
+  },
+  {
+   "t": "2026-09-07T17:40:31.458Z",
+   "kind": "text",
+   "agent": "interviewer",
+   "text": "Two things follow from that, and one of them corrects the wiki."
+  },
+  {
+   "t": "2026-09-07T17:40:31.458Z",
+   "kind": "tool",
+   "agent": "interviewer",
+   "name": "edit_file",
+   "input": {
+    "file_path": "wiki/processes/pay-with-avios-ba-holidays.md",
+    "old_string": "## What is and is not observable\n\n**This is the central data limitation of the product.**\n\n- Visible: all *logged-in member* activity — searches and bookings.\n- **Not visible: BA Holidays booking volume independent of Avios use.** Non-member\n  bookings are hidden from IAGL. {source: raw/pwa_exp}\n\nSo the denominator \"all BA Holidays bookings\" does not exist in our data. Any metric\nphrased as a *share* of total BA Holidays bookings is not computable as stated, and any\ndesign that needs untreated non-member bookings as a control group is unavailable.",
+    "new_string": "## What is and is not observable\n\n**This is the central data limitation of the product.**\n\n- Visible: all *logged-in member* activity — searches and **all member bookings, whether\n  or not Avios were redeemed**. Avios-redeeming bookings are a strict subset of visible\n  member bookings. Confirmed by the analyst in interview. {q:q-0001 on:2026-09-07}\n- **Not visible: non-member BA Holidays bookings.** These are hidden from IAGL.\n  {source: raw/pwa_exp}\n\nCorrection: an earlier reading of `raw/pwa_exp` implied that only Avios-redeeming\nbookings were countable. That was wrong. The invisible group is **non-members**, not\nnon-redeemers. {q:q-0001 on:2026-09-07}\n\nConsequences:\n\n- The denominator \"all BA Holidays bookings\" still does not exist in our data, so any\n  metric phrased as a share of *total* BA Holidays bookings is not computable as stated,\n  and non-member bookings are unavailable as a control group.\n- But **member booking volume is an observable outcome**, and it can be decomposed into\n  redeeming and non-redeeming bookings. This is what lets a genuine increase in bookings\n  be told apart from members merely switching into redeeming on bookings they would have\n  made anyway. That distinction is the crux of q-0001."
+   }
+  },
+  {
+   "t": "2026-09-07T17:40:32.234Z",
+   "kind": "commit",
+   "agent": "interviewer",
+   "path": "wiki/processes/pay-with-avios-ba-holidays.md",
+   "commit": "f9eb89d380657b79fbdbce3a794e16b448f4f4d5",
+   "url": "https://github.com/Guidosalimbeni/cb_wiki_storage/commit/f9eb89d380657b79fbdbce3a794e16b448f4f4d5",
+   "text": "edit wiki/processes/pay-with-avios-ba-holidays.md"
+  },
+  {
+   "t": "2026-09-07T17:40:36.671Z",
+   "kind": "tool",
+   "agent": "interviewer",
+   "name": "edit_file",
+   "input": {
+    "file_path": "wiki/experiments/2026-08-conversion-rate-flip.md",
+    "old_string": "reviewed. Also note the visibility limit on the outcome: non-member and non-Avios BA\nHolidays bookings are invisible, so total booking volume is not observable — only\nAvios-redeeming bookings are.",
+    "new_string": "reviewed. Also note the visibility limit on the outcome: **non-member** BA Holidays\nbookings are invisible, so *total* BA Holidays booking volume is not observable.\nCorrected in interview: **all member bookings are visible**, redeeming or not — the\ninvisible group is non-members, not non-redeemers. {q:q-0001 on:2026-09-07}"
+   }
+  },
+  {
+   "t": "2026-09-07T17:40:37.456Z",
+   "kind": "commit",
+   "agent": "interviewer",
+   "path": "wiki/experiments/2026-08-conversion-rate-flip.md",
+   "commit": "d7fc77e5fd15ab8e55ce81bfc89e1a5d32f6c94c",
+   "url": "https://github.com/Guidosalimbeni/cb_wiki_storage/commit/d7fc77e5fd15ab8e55ce81bfc89e1a5d32f6c94c",
+   "text": "edit wiki/experiments/2026-08-conversion-rate-flip.md"
+  },
+  {
+   "t": "2026-09-07T17:40:46.261Z",
+   "kind": "text",
+   "agent": "interviewer",
+   "text": "That's a materially better position than the wiki had recorded. I've corrected both pages: the hidden group is **non-members**, not non-redeemers.\n\nWhy it matters: member booking volume *is* an observable outcome, and it splits into redeeming and non-redeeming bookings. That's what lets us separate a real increase in bookings from members simply **switching into redeeming** on holidays they'd have booked anyway — which is the single most likely way this experiment looks successful while creating no incremental volume at all.\n\nBefore I go further into structure, I need to settle what we'll actually run this against, because it decides what any number is worth and there is no warehouse access skill here yet.\n\n---\n\n**QUESTION FOR THE ANALYST:**\n\n> When it comes to actually running this — where does the booking data live for you?\n\n**Options:**\n1. **Live** — I have a real connection in my own environment (warehouse/notebook) and can run against the real bookings data. *(An estimate here is about the company. If a connection needs building, that's a job for `technician`.)*\n2. **Sample** — I can hand you an extract (CSV/parquet) of member bookings over the relevant period. *(An estimate is about that extract; I'll need to know how it was filtered.)*\n3. **Simulated** — nothing available to share yet; generate data from the graph so we can check the design and the estimator work. *(Tests the code, never says anything about the company.)*\n4. **Live for me to run, but start me off on simulated** — you write and check the machinery on simulated data, I run the real thing my end."
+  },
+  {
+   "t": "2026-09-07T17:40:46.261Z",
+   "kind": "agent_end",
+   "agent": "interviewer",
+   "status": "done",
+   "text": "That's a materially better position than the wiki had recorded. I've corrected both pages: the hidden group is **non-members**, not non-redeemers.\n\nWhy it matters: member booking volume *is* an observable outcome, and it splits into redeeming and non-redeeming bookings. That's what lets us separate a real increase in bookings from members simply **switching into redeeming** on holidays they'd have booked anyway — which is the single most likely way this experiment looks successful while creating no incremental volume at all.\n\nBefore I go further into structure, I need to settle what we'll actually run this against, because it decides what any number is worth and there is no warehouse access skill here yet.\n\n---\n\n**QUESTION FOR THE ANALYST:**\n\n> When it comes to actually running this — where does the booking data live for you?\n\n**Options:**\n1. **Live** — I have a real connection in my own environment (warehouse/notebook) and can run against the real bookings data. *(An estimate here is about the company. If a connection needs building, that's a job for `technician`.)*\n2. **Sample** — I can hand you an extract (CSV/parquet) of member bookings over the relevant period. *(An estimate is about that extract; I'll need to know how it was filtered.)*\n3. **Simulated** — nothing available to share yet; generate data from the graph so we can check the design and the estimator work. *(Tests the code, never says anything about the company.)*\n4. **Live for me to run, but start me off on simulated** — you write and check the machinery on simulated data, I run the real thing my end."
+  },
+  {
+   "t": "2026-09-07T17:40:50.962Z",
+   "kind": "tool",
+   "agent": "main",
+   "name": "ask_analyst",
+   "input": {
+    "questions": [
+     {
+      "header": "Data mode",
+      "question": "When it comes to actually running this — where does the booking data live for you?",
+      "options": [
+       {
+        "label": "Live",
+        "description": "I have a real connection in my own environment (warehouse/notebook) and can run against real bookings data. An estimate here is about the company. If a connection needs building, that's a job for technician."
+       },
+       {
+        "label": "Sample extract",
+        "description": "I can hand you an extract (CSV/parquet) of member bookings over the relevant period. An estimate is about that extract; I'll need to know how it was filtered."
+       },
+       {
+        "label": "Simulated",
+        "description": "Nothing available to share yet; generate data from the graph so we can check the design and the estimator work. Tests the code, never says anything about the company."
+       },
+       {
+        "label": "Simulated first, live my end",
+        "description": "You write and check the machinery on simulated data, I run the real thing my end."
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "t": "2026-09-07T17:40:50.963Z",
+   "kind": "ask",
+   "agent": "main",
+   "questions": [
+    {
+     "question": "When it comes to actually running this — where does the booking data live for you?",
+     "header": "Data mode",
+     "options": [
+      {
+       "label": "Live",
+       "description": "I have a real connection in my own environment (warehouse/notebook) and can run against real bookings data. An estimate here is about the company. If a connection needs building, that's a job for technician."
+      },
+      {
+       "label": "Sample extract",
+       "description": "I can hand you an extract (CSV/parquet) of member bookings over the relevant period. An estimate is about that extract; I'll need to know how it was filtered."
+      },
+      {
+       "label": "Simulated",
+       "description": "Nothing available to share yet; generate data from the graph so we can check the design and the estimator work. Tests the code, never says anything about the company."
+      },
+      {
+       "label": "Simulated first, live my end",
+       "description": "You write and check the machinery on simulated data, I run the real thing my end."
+      }
+     ],
+     "multiSelect": false
+    }
+   ]
   }
  ],
- "commits": 2,
+ "commits": 4,
  "usage": {
-  "input": 138043,
-  "output": 4888,
-  "cacheRead": 142585
+  "input": 217090,
+  "output": 7657,
+  "cacheRead": 187078
  },
  "pending": {
-  "toolUseId": "toolu_011p48hLKAGDA7jmypmKU52b",
+  "toolUseId": "toolu_01KDAMYsTVVLSP57T8mvafxB",
   "toolName": "ask_analyst",
   "payload": [
    {
-    "question": "For a logged-in BA Holidays member who books a holiday but **does not** redeem any Avios — can you see that booking in your data?",
-    "header": "Visibility",
+    "question": "When it comes to actually running this — where does the booking data live for you?",
+    "header": "Data mode",
     "options": [
      {
-      "label": "Yes, all member bookings",
-      "description": "I can see all member bookings, with or without Avios redemption. So member bookings is a usable outcome, and Avios-redeeming bookings is a subset of it."
+      "label": "Live",
+      "description": "I have a real connection in my own environment (warehouse/notebook) and can run against real bookings data. An estimate here is about the company. If a connection needs building, that's a job for technician."
      },
      {
-      "label": "No, only Avios redemptions",
-      "description": "I only see a booking when Avios are redeemed. Avios-redeeming bookings is the only outcome available."
+      "label": "Sample extract",
+      "description": "I can hand you an extract (CSV/parquet) of member bookings over the relevant period. An estimate is about that extract; I'll need to know how it was filtered."
      },
      {
-      "label": "Searches yes, bookings no",
-      "description": "I can see member searches regardless, but only bookings when Avios are redeemed. Search volume is available as a separate, upstream measure."
+      "label": "Simulated",
+      "description": "Nothing available to share yet; generate data from the graph so we can check the design and the estimator work. Tests the code, never says anything about the company."
      },
      {
-      "label": "Partly / need to check",
-      "description": "I'm not sure and would need to check."
+      "label": "Simulated first, live my end",
+      "description": "You write and check the machinery on simulated data, I run the real thing my end."
      }
     ],
     "multiSelect": false
@@ -1051,24 +1356,24 @@
   "partialResults": [],
   "questions": [
    {
-    "question": "For a logged-in BA Holidays member who books a holiday but **does not** redeem any Avios — can you see that booking in your data?",
-    "header": "Visibility",
+    "question": "When it comes to actually running this — where does the booking data live for you?",
+    "header": "Data mode",
     "options": [
      {
-      "label": "Yes, all member bookings",
-      "description": "I can see all member bookings, with or without Avios redemption. So member bookings is a usable outcome, and Avios-redeeming bookings is a subset of it."
+      "label": "Live",
+      "description": "I have a real connection in my own environment (warehouse/notebook) and can run against real bookings data. An estimate here is about the company. If a connection needs building, that's a job for technician."
      },
      {
-      "label": "No, only Avios redemptions",
-      "description": "I only see a booking when Avios are redeemed. Avios-redeeming bookings is the only outcome available."
+      "label": "Sample extract",
+      "description": "I can hand you an extract (CSV/parquet) of member bookings over the relevant period. An estimate is about that extract; I'll need to know how it was filtered."
      },
      {
-      "label": "Searches yes, bookings no",
-      "description": "I can see member searches regardless, but only bookings when Avios are redeemed. Search volume is available as a separate, upstream measure."
+      "label": "Simulated",
+      "description": "Nothing available to share yet; generate data from the graph so we can check the design and the estimator work. Tests the code, never says anything about the company."
      },
      {
-      "label": "Partly / need to check",
-      "description": "I'm not sure and would need to check."
+      "label": "Simulated first, live my end",
+      "description": "You write and check the machinery on simulated data, I run the real thing my end."
      }
     ],
     "multiSelect": false
@@ -1077,5 +1382,5 @@
  },
  "qid": "q-0001",
  "lastCommand": "cb_ask",
- "final": "I'll start by reading the wiki."
+ "final": ""
 }
